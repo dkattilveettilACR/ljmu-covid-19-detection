@@ -2,4 +2,5 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/data/Data/5839_18613_bundle_archive.zip
+/data/Data/
+/model_weights
