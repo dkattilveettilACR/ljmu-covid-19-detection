@@ -124,9 +124,10 @@ gan.compile(loss='binary_crossentropy', optimizer=optimizer)
 
 def load_xrays(epochs=100, batch_size=32):
     (img_x, img_y) = 128, 128
-    train_path = "/Users/anushkagupta/Desktop/newDataTrain.csv"
+    train_path = "./data/Data/5839_18613_bundle_archive/newDataTrain.csv"
+    base_folder_path = "./"
 
-    class_name = sys.argv[1] #['Atelectasis', 'No Finding', 'Cardiomegaly', 'Effusion', 'Pneumothorax']
+    class_name = ['Atelectasis', 'No Finding', 'Cardiomegaly', 'Effusion', 'Pneumothorax']
     num_classes = 5
 
     # Load training data
@@ -135,11 +136,10 @@ def load_xrays(epochs=100, batch_size=32):
     x_train = []
     # prepare label binarizer
     from sklearn import preprocessing
-    image_path = "/Volumes/Anushka/data/train/"
 
     count = 0
-    for index, row in dataTrain[dataTrain["Finding Labels"] == class_name].iterrows():
-        img1 = image_path + row["Image Index"]
+    for index, row in dataTrain[dataTrain["Finding Labels"].isin(class_name)].iterrows():
+        img1 = base_folder_path + row["Image Index"]
         image1 = cv2.imread(img1)  # Image.open(img).convert('L')
         image1 = image1[:, :, 0]
         arr1 = cv2.resize(image1, (img_x, img_y))
@@ -160,6 +160,7 @@ def load_xrays(epochs=100, batch_size=32):
 
     valid1 = np.ones((batch_size, 1))
     fake = np.zeros((batch_size, 1))
+    save_interval = 1
 
     for epoch in range(epochs):
 
@@ -191,36 +192,36 @@ def load_xrays(epochs=100, batch_size=32):
         print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
 
 
-"""
-        # If at save interval => save generated image samples
-        #if epoch % save_interval == 0:
-            #self.save_imgs(epoch)
 
-def save_imgs(self, epoch):
-    r, c = 100, 10
-    noise = np.random.normal(0, 1, (r * c, self.latent_dim))
-    gen_imgs = self.generator.predict(noise)
+        #If at save interval => save generated image samples
+        if epoch % save_interval == 0:
+            save_imgs(epoch)
 
-    # Rescale images 0 - 1
+def save_imgs(epoch):
+    r, c = 2, 2
+    noise = np.random.normal(0, 1, (r * c, latent_dim))
+    gen_imgs = generator.predict(noise)
+
+    #Rescale images 0 - 1
     gen_imgs = 0.5 * gen_imgs + 0.5
 
-    fig, axs = plt.subplots(r, c)
+    fig, axs = plt.subplots(r, c)   
     cnt = 0
     for i in range(r):
         for j in range(c):
             axs[i, j].imshow(gen_imgs[cnt, :, :, 0], cmap='gray')
             axs[i, j].axis('off')
             cnt += 1
-    fig.savefig("../images1/xrays_%d.png" % epoch)
+    fig.savefig("./data/Data/generated/dcgan/xrays_%d.png" % epoch)
     plt.close()
-"""
+
 
 
 if __name__ == '__main__':
 
-    load_xrays(epochs=4, batch_size=32)
-    generator.save('dcgen.h5')
-    discriminator.save('dcdis.h5')
+    load_xrays(epochs=1, batch_size=32)
+    generator.save('./model_weights/dcgan/dcgen.h5')
+    discriminator.save('./model_weights/dcgan/dcdis.h5')
 
     from sklearn import preprocessing
 
@@ -242,7 +243,7 @@ if __name__ == '__main__':
             img = dcgan.generator.predict(noise1)  # labels1])
             plt.imshow(img[cnt, :, :, 0], cmap='gray')
             # cnt+=1
-            fig.savefig("/Users/anushkagupta/Desktop/class1" + str(label) + "-" + str(num) + ".png")
+            fig.savefig("./data/Data/generated/dcgan/class_" + str(label) + "-" + str(num) + ".png")
             plt.clf()
 
 

@@ -239,14 +239,14 @@ class ACGAN():
                 axs[i,j].imshow(gen_imgs[cnt,:,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("./data/Data/generated/xrays_%d.png" % epoch)
+        fig.savefig("./data/Data/generated/dcgan_ac/xrays_%d.png" % epoch)
         plt.close()
 
     def save_model(self):
 
         def save(model, model_name):
-            model_path = "model_weights/%s.json" % model_name
-            weights_path = "model_weights/%s_weights.hdf5" % model_name
+            model_path = "model_weights/dcgan_ac/%s.json" % model_name
+            weights_path = "model_weights/dcgan_ac/%s_weights.hdf5" % model_name
             options = {"file_arch": model_path,
                         "file_weight": weights_path}
             json_string = model.to_json()
@@ -261,12 +261,12 @@ if __name__ == '__main__':
     acgan = ACGAN()
     acgan.train(epochs=1, batch_size=32, sample_interval=1)
     # generator = load_model("./model_weights/dcgen.h5")
-    json_file = open('model_weights/generator.json', 'r')
+    json_file = open('model_weights/dcgan_ac/generator.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
-    loaded_model.load_weights("model_weights/generator_weights.hdf5")
+    loaded_model.load_weights("model_weights/dcgan_ac/generator_weights.hdf5")
 
     # at the end, loop per class, per 1000 images
     cnt = 0
@@ -286,5 +286,5 @@ if __name__ == '__main__':
                 axs[i,j].imshow(gen_imgs[cnt,:,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("./data/Data/generated/class_" + str(label) + ".png")
+        fig.savefig("./data/Data/generated/dcgan_ac/class_" + str(label) + ".png")
         plt.close()
