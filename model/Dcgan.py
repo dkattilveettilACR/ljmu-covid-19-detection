@@ -240,7 +240,7 @@ if __name__ == '__main__':
             noise1 = np.random.normal(0, 1, (1, 128))  # cgan.latent_dim))
             # noise1 = np.zeros((1, 10000))
             # labels1 = np.tile(labels, 1000)
-            img = dcgan.generator.predict(noise1)  # labels1])
+            img = generator.predict(noise1)  # labels1])
             plt.imshow(img[cnt, :, :, 0], cmap='gray')
             # cnt+=1
             fig.savefig("./data/Data/generated/dcgan/class_" + str(label) + "-" + str(num) + ".png")
