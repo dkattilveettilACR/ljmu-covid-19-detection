@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\data",
+    "\\data\\chest_xray_data_reader",
+    "\\model"
+  ],
+  "SelectedNode": "\\data\\chest_xray_data_reader\\create_csv_for_images.py",
+  "PreviewInSolutionExplorer": false
+}
