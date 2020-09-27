@@ -4,3 +4,9 @@
 
 /data/Data/
 /model_weights
+/data/generated/dcgan_ac/xrays_0.png
+/data/generated/dcgan_ac/class_Pneumothorax.png
+/data/generated/dcgan_ac/class_No Finding.png
+/data/generated/dcgan_ac/class_Effusion.png
+/data/generated/dcgan_ac/class_Cardiomegaly.png
+/data/generated/dcgan_ac/class_Atelectasis.png
