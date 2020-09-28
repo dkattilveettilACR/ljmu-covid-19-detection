@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	root_dir = './data/Data/covid-19-AR/'
 	image_dir = './data./Data./COVID-19-AR-images/'
 	# field names  
-	fields = ['Image Index', 'Finding Labels']  
+	fields = ['filename', 'finding']  
 	source_csv_file = './data/covid-ar-data-reader/covid-ar-data.csv'
 	# writing to csv file  
 	with open(source_csv_file, 'w', newline='') as csvfile:  

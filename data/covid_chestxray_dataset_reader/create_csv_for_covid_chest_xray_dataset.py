@@ -8,6 +8,7 @@ if __name__ == '__main__':
 	fields = ['filename', 'finding', 'view', 'modality']  
 	filename = './data/covid_chestxray_dataset_reader/covid-chest-xray-data.csv'
 	source_csv_file = './data/Data/covid-chestxray-dataset/metadata.csv'
+	base_folder_path = './data/Data/covid-chestxray-dataset/images/'
 
 	covid_data = pd.read_csv(source_csv_file, usecols = fields)
 	covid_data.head(5)
@@ -35,6 +36,6 @@ if __name__ == '__main__':
 	covid_data.loc[covid_data['finding'].isin(covid_pneumonia) , 'finding'] = 'covid pneumonia'
 
 	covid_data = covid_data.loc[covid_data['finding'].isin(['normal', 'viral pneumonia', 'bacterial pneumonia', 'covid pneumonia']), ['filename', 'finding']]
-	
+	covid_data['filename'] = base_folder_path + covid_data['filename']
 	#writing to csv file  
 	covid_data.to_csv(filename, index=False)

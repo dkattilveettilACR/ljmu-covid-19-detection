@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-dcgan_covid",
+      "appliesTo": "model/dcgan_covid.py",
+      "type": "launch"
+    }
+  ]
+}

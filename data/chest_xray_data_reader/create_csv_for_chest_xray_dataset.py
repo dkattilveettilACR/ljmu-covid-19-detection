@@ -4,7 +4,7 @@ import csv
 if __name__ == '__main__':
 	root_dir = './data/Data/chest-xray-pneumonia/chest_xray/'
 	# field names  
-	fields = ['Image Index', 'Finding Labels']  
+	fields = ['filename', 'finding']  
 	source_csv_file = './data/chest_xray_data_reader/chest-xray-data.csv'
 	# writing to csv file  
 	with open(source_csv_file, 'w', newline='') as csvfile:  

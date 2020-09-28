@@ -239,7 +239,7 @@ class ACGAN():
                 axs[i,j].imshow(gen_imgs[cnt,:,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("./data/Data/generated/dcgan_ac/xrays_%d.png" % epoch)
+        fig.savefig("./data/generated/dcgan_ac/xrays_%d.png" % epoch)
         plt.close()
 
     def save_model(self):
@@ -286,5 +286,5 @@ if __name__ == '__main__':
                 axs[i,j].imshow(gen_imgs[cnt,:,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("./data/Data/generated/dcgan_ac/class_" + str(label) + ".png")
+        fig.savefig("./data/generated/dcgan_ac/class_" + str(label) + ".png")
         plt.close()
