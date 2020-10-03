@@ -28,6 +28,7 @@ img_shape = (img_rows, img_cols, channels)
 latent_dim = 100
 
 optimizer = Adam(0.0001, 0.8)
+num_classes = 4
 
 
 def build_generator(latent_dim1):
@@ -127,26 +128,17 @@ gan.compile(loss='binary_crossentropy', optimizer=optimizer)
 
 def load_xrays(epochs=100, batch_size=32):
     (img_x, img_y) = 128, 128
-    chest_xray_data_file = './data/chest_xray_data_reader/chest-xray-data.csv'
-    covid_chest_xray_data_file = './data/covid_chestxray_dataset_reader/covid-chest-xray-data.csv'
-    covid_ar_data_file = './data/covid-ar-data-reader/covid-ar-data.csv'
+    metadata_csv = './data/metadata.csv'
+    dataTrain = pd.read_csv(metadata_csv)
     
-    #merge data from 3 files
-    chest_xray_data = pd.read_csv(chest_xray_data_file)
-    covid_chest_xray_data = pd.read_csv(covid_chest_xray_data_file)
-    covid_ar_data = pd.read_csv(covid_ar_data_file)
     
-    dataTrain = pd.concat([chest_xray_data, covid_chest_xray_data, covid_ar_data], axis = 0)
-
-    class_name = ['normal', 'viral pneumonia', 'bacterial pneumonia', 'covid pneumonia']
-    num_classes = 4
 
     x_train = []
     # prepare label binarizer
     from sklearn import preprocessing
 
     count = 0
-    for index, row in dataTrain[dataTrain["finding"].isin(class_name)].iterrows():
+    for index, row in dataTrain.iterrows():
         img1 = row["filename"]
         if (path.exists(img1)):
             image1 = cv2.imread(img1)  # Image.open(img).convert('L')
@@ -235,14 +227,10 @@ if __name__ == '__main__':
 
     lb = preprocessing.LabelEncoder()  # Binarizer()
 
-    classes = ['normal', 'viral pneumonia', 'bacterial pneumonia', 'covid pneumonia']
-
-    OHE_labels = lb.fit_transform(classes)
-
     # at the end, loop per class, per 1000 images
     cnt = 0
     fig, ax = plt.subplots()
-    for label in OHE_labels:
+    for label in range(0,4):
         for num in range(1000):
             #nlab = np.asarray([label]).reshape(-1, 1)
             noise1 = np.random.normal(0, 1, (1, 100))  # cgan.latent_dim))
