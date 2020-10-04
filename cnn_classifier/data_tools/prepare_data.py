@@ -14,8 +14,8 @@ parser.add_argument("--combine_pneumonia", action='store_true', default=False)
 args = parser.parse_args()
 
 COVID19_DATA_PATH = "./data/covid19"
-COVID19_IMGS_PATH = "./covid-chestxray-dataset"
-PNEUMONIDA_DATA_PATH = "./chest-xray-pneumonia"
+COVID19_IMGS_PATH = "./data/Data/covid-chestxray-dataset/"
+PNEUMONIDA_DATA_PATH = "./data/Data/chest-xray-pneumonia/chest_xray/"
 DATA_PATH = "./data"
 
 # Assert that the data directories are present

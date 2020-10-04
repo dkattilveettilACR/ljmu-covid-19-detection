@@ -9,7 +9,7 @@ import pandas as pd
 from collections import Counter 
 
 # Dataset path
-COVID_DATA_PATH='./covid-chestxray-dataset'
+COVID_DATA_PATH='./data/Data/covid-chestxray-dataset'
 METADATA_CSV = os.path.join(COVID_DATA_PATH, 'metadata.csv')
 TRAIN_FILE = './data/covid19/train_list.txt'
 VAL_FILE = './data/covid19/val_list.txt'

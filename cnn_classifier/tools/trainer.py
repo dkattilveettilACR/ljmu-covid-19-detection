@@ -37,7 +37,8 @@ class Trainer:
             raise NotImplementedError("Currently distributed training not supported")
             self.device = torch.cuda.device('cuda', local_rank)
         else:
-            self.device = torch.cuda.device('cuda')
+            # self.device = torch.cuda.device('cuda')
+            self.device = None
 
         # Using 2 classes for pneumonia vs 1 class
         self.combine_pneumonia = combine_pneumonia
@@ -402,8 +403,8 @@ class Trainer:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--local_rank", type=int) # For distributed processing
-    parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=True)
-    parser.add_argument("--checkpoint", type=str, required=True)
+    parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=True, default = 'train')
+    parser.add_argument("--checkpoint", type=str, required=True, default=".\models\CovidAID_4_class.pth")
     parser.add_argument("--combine_pneumonia", action='store_true', default=False)
     parser.add_argument("--save", type=str)
     parser.add_argument("--start", type=int, default=0)
@@ -424,7 +425,7 @@ if __name__ == '__main__':
     # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
     if args.local_rank is not None:
         torch.distributed.init_process_group(backend='nccl')
-
+    # args.checkpoint = None
     trainer = Trainer(local_rank=args.local_rank, checkpoint=args.checkpoint, combine_pneumonia=args.combine_pneumonia)
     if args.mode == 'test':
         trainer.evaluate(TEST_IMAGE_LIST, cm_path=args.cm_path, roc_path=args.roc_path)

@@ -1,0 +1,18 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "--mode=train --checkpoint=.\\models\\CovidAID_4_class.pth",
+      "env": {},
+      "nativeDebug": false,
+      "webBrowserUrl": "",
+      "project": "cnn_classifier\\tools\\trainer.py",
+      "projectTarget": "",
+      "name": "trainer.py"
+    }
+  ]
+}
