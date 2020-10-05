@@ -21,8 +21,8 @@ import numpy as np
 class ACGAN():
     def __init__(self):
         # Input shape
-        self.img_rows = 128
-        self.img_cols = 128
+        self.img_rows = 256
+        self.img_cols = 256
         self.channels = 1
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
         self.num_classes = 4
@@ -85,7 +85,10 @@ class ACGAN():
         model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(Activation("relu"))
-
+        model.add(UpSampling2D())
+        model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(Activation("relu"))
         model.add(Conv2DTranspose(1, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(Activation("tanh"))
 
@@ -142,7 +145,7 @@ class ACGAN():
 
         # Load the dataset
         (img_x, img_y) = 128, 128
-        metadata_csv = './data/gan_data_readers/metadata.csv'
+        metadata_csv = './gan_classifier/gan_data_tools/metadata.csv'
         dataTrain = pd.read_csv(metadata_csv)
 
         print(dataTrain.info())
@@ -246,8 +249,8 @@ class ACGAN():
     def save_model(self):
 
         def save(model, model_name):
-            model_path = "model_weights/dcgan_ac_covid/%s.json" % model_name
-            weights_path = "model_weights/dcgan_ac_covid/%s_weights.hdf5" % model_name
+            model_path = "./model_weights/dcgan_ac_covid/%s.json" % model_name
+            weights_path = "./model_weights/dcgan_ac_covid/%s_weights.hdf5" % model_name
             options = {"file_arch": model_path,
                         "file_weight": weights_path}
             json_string = model.to_json()
@@ -260,14 +263,14 @@ class ACGAN():
 
 if __name__ == '__main__':
     acgan = ACGAN()
-    acgan.train(epochs=1, batch_size=32, sample_interval=1)
+    acgan.train(epochs=2, batch_size=10, sample_interval=1)
     # generator = load_model("./model_weights/dcgen.h5")
-    json_file = open('model_weights/dcgan_ac_covid/generator.json', 'r')
+    json_file = open('./model_weights/dcgan_ac_covid/generator.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
-    loaded_model.load_weights("model_weights/dcgan_ac_covid/generator_weights.hdf5")
+    loaded_model.load_weights("./model_weights/dcgan_ac_covid/generator_weights.hdf5")
 
     # at the end, loop per class, per 1000 images
     cnt = 0

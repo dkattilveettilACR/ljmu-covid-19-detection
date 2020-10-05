@@ -404,15 +404,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--local_rank", type=int) # For distributed processing
     parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=True, default = 'train')
-    parser.add_argument("--checkpoint", type=str, required=True, default=".\models\CovidAID_4_class.pth")
+    parser.add_argument("--checkpoint", type=str, required=True, default=".\cnn_classifier\models\CovidAID_4_class.pth")
     parser.add_argument("--combine_pneumonia", action='store_true', default=False)
     parser.add_argument("--save", type=str)
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--freeze", action='store_true', default=False)
     parser.add_argument("--bs", type=int, default=8)
-    parser.add_argument("--cm_path", type=str, default='plots/cm')
-    parser.add_argument("--roc_path", type=str, default='plots/roc')
+    parser.add_argument("--cm_path", type=str, default='./cnn_classifier/plots/cm')
+    parser.add_argument("--roc_path", type=str, default='./cnn_classifier/plots/roc')
 
     # parser.add_argment("--torch_version", "--tv", choices=["0.3", "new"], default="0.3")
     args = parser.parse_args()
@@ -434,7 +434,7 @@ if __name__ == '__main__':
         trainer.train(TRAIN_IMAGE_LIST, VAL_IMAGE_LIST, BATCH_SIZE=args.bs, NUM_EPOCHS=300, LR=args.lr,
                         start_epoch=args.start, save_path=args.save, freeze_feature_layers=args.freeze)
     else:
-        trainer.F1(TEST_DIR, 'models/samples.txt')
+        trainer.F1(TEST_DIR, './cnn_classifier/models/samples.txt')
 
 # Run command for distributed
 # python -m torch.distributed.launch --nproc_per_node=2 --nnodes=2 --node_rank=0 --master_addr="192.168.1.1" --master_port=1234 OUR_TRAINING_SCRIPT.py (--arg1 --arg2 --arg3 and all other arguments of our training script)

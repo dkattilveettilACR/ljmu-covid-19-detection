@@ -6,13 +6,25 @@
       "type": "python",
       "interpreter": "(default)",
       "interpreterArguments": "",
-      "scriptArguments": "--mode=train --checkpoint=.\\models\\CovidAID_4_class.pth",
+      "scriptArguments": "--mode=train --save=.\\cnn_classifier\\models\\CovidAID_4_class_new.pth",
       "env": {},
       "nativeDebug": false,
       "webBrowserUrl": "",
       "project": "cnn_classifier\\tools\\trainer.py",
       "projectTarget": "",
       "name": "trainer.py"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {},
+      "nativeDebug": false,
+      "webBrowserUrl": "",
+      "project": "gan_classifier\\dcgan_covid.py",
+      "projectTarget": "",
+      "name": "dcgan_covid.py"
     }
   ]
 }

@@ -1,10 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\cnn_classifier",
+    "\\cnn_classifier\\data_tools",
+    "\\cnn_classifier\\models",
     "\\data",
-    "\\data\\chest_xray_data_reader",
-    "\\model"
+    "\\data\\Data\\chest-xray-pneumonia\\chest_xray",
+    "\\data\\Data\\covid-ar-test",
+    "\\data\\Data\\covid-chestxray-dataset",
+    "\\gan_classifier",
+    "\\gan_classifier\\gan_data_tools"
   ],
-  "SelectedNode": "\\data\\chest_xray_data_reader\\create_csv_for_images.py",
+  "SelectedNode": "\\.gitignore",
   "PreviewInSolutionExplorer": false
 }

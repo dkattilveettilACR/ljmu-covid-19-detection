@@ -20,8 +20,8 @@ from os import path
 
 
 # Input shape
-img_rows = 128
-img_cols = 128
+img_rows = 256
+img_cols = 256
 
 channels = 1
 img_shape = (img_rows, img_cols, channels)
@@ -55,6 +55,10 @@ def build_generator(latent_dim1):
     model.add(Activation("relu"))
     model.add(UpSampling2D())
     model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
+    model.add(BatchNormalization(momentum=0.8))
+    model.add(Activation("relu"))
+    model.add(UpSampling2D())
+    model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
     model.add(BatchNormalization(momentum=0.8))
     model.add(Activation("relu"))
 
@@ -127,8 +131,8 @@ gan.compile(loss='binary_crossentropy', optimizer=optimizer)
 
 
 def load_xrays(epochs=100, batch_size=32):
-    (img_x, img_y) = 128, 128
-    metadata_csv = './data/gan_data_readers/metadata.csv'
+    (img_x, img_y) = 256, 256
+    metadata_csv = './gan_classifier/gan_data_tools/metadata.csv'
     dataTrain = pd.read_csv(metadata_csv)
     
     
@@ -219,9 +223,9 @@ def save_imgs(epoch):
 if __name__ == '__main__':
 
 
-    load_xrays(epochs=100, batch_size=32)
-    generator.save('./model_weights/dcgan/dcgen_covid.h5')
-    discriminator.save('./model_weights/dcgan/dcdis_covid.h5')
+    load_xrays(epochs=2, batch_size=16)
+    generator.save('./model_weights/dcgan_covid/dcgen_covid.h5')
+    discriminator.save('./model_weights/dcgan_covid/dcdis_covid.h5')
 
     from sklearn import preprocessing
 
@@ -231,7 +235,7 @@ if __name__ == '__main__':
     cnt = 0
     fig, ax = plt.subplots()
     for label in range(0,4):
-        for num in range(1000):
+        for num in range(2):
             #nlab = np.asarray([label]).reshape(-1, 1)
             noise1 = np.random.normal(0, 1, (1, 100))  # cgan.latent_dim))
             # noise1 = np.zeros((1, 10000))

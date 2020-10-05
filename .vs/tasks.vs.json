@@ -5,6 +5,11 @@
       "taskLabel": "task-dcgan_covid",
       "appliesTo": "model/dcgan_covid.py",
       "type": "launch"
+    },
+    {
+      "taskLabel": "task-trainer",
+      "appliesTo": "cnn_classifier/tools/trainer.py",
+      "type": "launch"
     }
   ]
 }
