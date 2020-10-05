@@ -144,7 +144,7 @@ class ACGAN():
     def train(self, epochs, batch_size=128, sample_interval=50):
 
         # Load the dataset
-        (img_x, img_y) = 128, 128
+        (img_x, img_y) = 256, 256
         metadata_csv = './gan_classifier/gan_data_tools/metadata.csv'
         dataTrain = pd.read_csv(metadata_csv)
 
