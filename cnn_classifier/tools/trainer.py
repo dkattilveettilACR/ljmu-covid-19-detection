@@ -112,6 +112,7 @@ class Trainer:
 
 
         for epoch in range(start_epoch, NUM_EPOCHS):
+            print("Epoch:", epoch)
             # switch to train mode
             self.net.train()
             tot_loss = 0.0
@@ -186,6 +187,7 @@ class Trainer:
                     f.write("{}\n".format(log))
 
             model_path = os.path.join(save_path, 'epoch_%d.pth'%(epoch+1))
+            print("Saving model:", model_path)
             self.save_model(model_path)
             
         print ('Finished Training')
@@ -406,7 +408,7 @@ if __name__ == '__main__':
     parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=True, default = 'train')
     parser.add_argument("--checkpoint", type=str, required=True, default=".\cnn_classifier\models\CovidAID_4_class.pth")
     parser.add_argument("--combine_pneumonia", action='store_true', default=False)
-    parser.add_argument("--save", type=str)
+    parser.add_argument("--save", type=str, default = ".\cnn_classifier\models")
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--freeze", action='store_true', default=False)
