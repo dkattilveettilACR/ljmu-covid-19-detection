@@ -30,8 +30,8 @@ print (covids)
 print ("Total Images:", total_data, '\n')
 
 # Assign train-val-test split
-test_patients = set({'4', '15', '86', '59', '6', '82', '80', '78', '76', '65', '36', '32', '50', '18', '115', '152', '138', '70', '116'})
-val_patients = set({'73', '51', '48', '11', '43', '24', '112'})
+test_patients = set({'4', '15', '86', '59', '6', '82', '80', '78', '76', '65', '36', '32', '50', '18', '115', '152', '138', '70', '116', '122', '148', '166', '177', '264'})
+val_patients = set({'73', '51', '48', '11', '43', '24', '112', '57', '61', '69', '41', '28', '91', '98', '101', '120', '131', '144', '158' })
 
 print ('#Train patients:', len(set(covids.keys()).difference(test_patients.union(val_patients))))
 print ('#Test patients:', len(test_patients))

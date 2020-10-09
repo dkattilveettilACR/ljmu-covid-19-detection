@@ -27,4 +27,10 @@ images\covid-19-pneumonia-24-day6.jpg
 images\covid-19-pneumonia-24-day7.jpg
 images\covid-19-pneumonia-24-day12.jpg
 images\RX-torace-a-letto-del-paziente-in-unica-proiezione-AP-1-1.jpeg
+images\4ad30bc6-2da0-4f84-bc9b-62acabfd518a.annot.original.png
 images\radiol.2020201160.fig2b.jpeg
+images\covid-19-pneumonia-38-pa.jpg
+images\16663_1_1.jpg
+images\865336ed.jpg
+images\436a6348.jpg
+images\48c4542c.jpg

@@ -54,7 +54,7 @@ class Trainer:
         if checkpoint is not None:
             self.load_model(checkpoint)
 
-    def train(self, TRAIN_IMAGE_LIST, VAL_IMAGE_LIST, NUM_EPOCHS=10, LR=0.001, BATCH_SIZE=64,
+    def train(self, TRAIN_IMAGE_LIST, VAL_IMAGE_LIST, NUM_EPOCHS=10, LR=0.001, BATCH_SIZE=32,
                 start_epoch=0, logging=True, save_path=None, freeze_feature_layers=True):
         """
         Train the CovidAID

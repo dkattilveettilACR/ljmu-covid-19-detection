@@ -27,7 +27,6 @@ images\F2DE909F-E19C-4900-92F5-8F435B031AC6.jpeg
 images\31BA3780-2323-493F-8AED-62081B9C383B.jpeg
 images\1312A392-67A3-4EBF-9319-810CF6DA5EF6.jpeg
 images\23E99E2E-447C-46E5-8EB2-D35D12473C39.png
-images\7AF6C1AF-D249-4BD2-8C26-449304105D03.jpeg
 images\1B734A89-A1BF-49A8-A1D3-66FAFA4FAC5D.jpeg
 images\85E52EB3-56E9-4D67-82DA-DEA247C82886.jpeg
 images\6CB4EFC6-68FA-4CD5-940C-BEFA8DAFE9A7.jpeg
@@ -39,21 +38,16 @@ images\446B2CB6-B572-40AB-B01F-1910CA07086A.jpeg
 images\80446565-E090-4187-A031-9D3CEAA586C8.jpeg
 images\7E335538-2F86-424E-A0AB-6397783A38D0.jpeg
 images\D7AF463C-2369-492D-908D-BE1911CCD74C.jpeg
-images\all14238-fig-0001-m-b.jpg
-images\all14238-fig-0001-m-c.jpg
 images\all14238-fig-0002-m-d.jpg
 images\all14238-fig-0002-m-e.jpg
 images\all14238-fig-0002-m-f.jpg
 images\ciaa199.pdf-001-a.png
-images\ciaa199.pdf-001-b.png
 images\kjr-21-e24-g001-l-a.jpg
 images\kjr-21-e24-g002-l-a.jpg
 images\1-s2.0-S1684118220300682-main.pdf-002-a1.png
 images\1-s2.0-S1684118220300682-main.pdf-002-a2.png
 images\1-s2.0-S1684118220300682-main.pdf-003-b1.png
 images\1-s2.0-S1684118220300682-main.pdf-003-b2.png
-images\gr1_lrg-a.jpg
-images\gr1_lrg-b.jpg
 images\171CB377-62FF-4B76-906C-F3787A01CB2E.jpeg
 images\5931B64A-7B97-485D-BE60-3F1EA76BC4F0.jpeg
 images\C6EA0BE5-B01E-4113-B194-18D956675E25.jpeg
@@ -70,7 +64,6 @@ images\covid-19-pneumonia-30-PA.jpg
 images\6b44464d-73a7-4cf3-bbb6-ffe7168300e3.annot.original.jpeg
 images\58cb9263f16e94305c730685358e4e_jumbo.jpeg
 images\9fdd3c3032296fd04d2cad5d9070d4_jumbo.jpeg
-images\covid-19-infection-exclusive-gastrointestinal-symptoms-pa.png
 images\covid-19-pneumonia-28.png
 images\1.CXRCTThoraximagesofCOVID-19fromSingapore.pdf-001-fig2a.png
 images\1.CXRCTThoraximagesofCOVID-19fromSingapore.pdf-001-fig2b.png
@@ -94,12 +87,9 @@ images\post-intubuation-pneumomediastium-and-pneumothorax-background-covid-19-pn
 images\post-intubuation-pneumomediastium-and-pneumothorax-background-covid-19-pneumonia-day7.jpg
 images\covid-19-pneumonia-49-day4.jpg
 images\covid-19-pneumonia-49-day8.jpg
-images\covid-19-pneumonia-43-day0.jpeg
-images\covid-19-pneumonia-43-day2.jpeg
 images\covid-19-pneumonia-40.jpg
 images\covid-19-pneumonia-42.jpeg
 images\da9e9aac-de8c-44c7-ba57-e7cc8e4caaba.annot.original.jpeg
-images\4ad30bc6-2da0-4f84-bc9b-62acabfd518a.annot.original.png
 images\fff49165-b22d-4bb4-b9d1-d5d62c52436c.annot.original.png
 images\figure1-5e7c1b8d98c29ab001275405-98.jpeg
 images\figure1-5e7c1b8d98c29ab001275405-98-later.jpeg
@@ -109,7 +99,6 @@ images\radiol.2020201160.fig2d.jpeg
 images\radiol.2020201160.fig3a.jpeg
 images\radiol.2020201160.fig3b.jpeg
 images\radiol.2020201160.fig3c.jpeg
-images\radiol.2020201160.fig3d.jpeg
 images\radiol.2020201160.fig6b.jpeg
 images\radiol.2020200274.fig3d.png
 images\covid-19-pneumonia-8.jpg
@@ -118,7 +107,6 @@ images\covid-19-pneumonia-20.jpg
 images\covid-19-pneumonia-22-day1-pa.png
 images\covid-19-pneumonia-22-day2-pa.png
 images\covid-19-pneumonia-34.png
-images\covid-19-pneumonia-38-pa.jpg
 images\covid-19-pneumonia-35-1.jpg
 images\covid-19-pneumonia-35-2.jpg
 images\covid-19-pneumonia-41-day-0.jpg
@@ -132,7 +120,6 @@ images\covid-19-pneumonia-58-day-10.jpg
 images\covid-19-pneumonia-mild.JPG
 images\covid-19-pneumonia-67.jpeg
 images\covid-19-pneumonia-bilateral.jpg
-images\16663_1_1.jpg
 images\16660_1_1.jpg
 images\16660_2_1.jpg
 images\16660_3_1.jpg
@@ -263,9 +250,6 @@ images\1d435a4b.jpg
 images\0a7faa2a.jpg
 images\b39f5cf9.jpg
 images\5782ae15.jpg
-images\865336ed.jpg
-images\436a6348.jpg
-images\48c4542c.jpg
 images\c3829ecb.jpg
 images\5acb8ac5.jpg
 images\a8ac1969.jpg
