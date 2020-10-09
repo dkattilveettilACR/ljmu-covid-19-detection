@@ -20,6 +20,6 @@ The main requirements are listed below
 - Tqdm
 
 ## Dataset
-`CovidAID` uses the [covid-chestxray-dataset](https://github.com/ieee8023/covid-chestxray-dataset) for COVID-19 X-Ray images and [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia) dataset for data on Pneumonia and Normal lung X-Ray images. 
+`CovidAID` uses the [covid-chest-xray-dataset](https://github.com/ieee8023/covid-chest-xray-dataset) for COVID-19 X-Ray images and [chest-xray-pneumonia](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia) dataset for data on Pneumonia and Normal lung X-Ray images. 
 
 Download and save the chest-xray-pneumonia dataset in the current folder.

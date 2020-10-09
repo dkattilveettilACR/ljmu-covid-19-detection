@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\cnn_classifier",
-    "\\cnn_classifier\\data_tools",
     "\\cnn_classifier\\models",
     "\\cnn_classifier\\tools",
     "\\data",
     "\\data\\Data",
     "\\gan_classifier",
     "\\gan_classifier\\gan_data_tools",
-    "\\gan_classifier\\gan_data_tools\\covid-ar-data-reader"
+    "\\gan_classifier\\gan_data_tools\\covid-ar-data-reader",
+    "\\gan_classifier\\gan_data_tools\\covid_chestxray_dataset_reader"
   ],
-  "SelectedNode": "\\cnn_classifier\\tools\\transfer.py",
+  "SelectedNode": "\\gan_classifier\\gan_data_tools\\covid_chestxray_dataset_reader\\create_csv_for_covid_chest_xray_dataset.py",
   "PreviewInSolutionExplorer": false
 }

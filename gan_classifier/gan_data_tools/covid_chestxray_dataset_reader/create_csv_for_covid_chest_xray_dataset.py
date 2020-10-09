@@ -3,11 +3,11 @@ import csv
 import pandas as pd
 
 if __name__ == '__main__':
-	root_dir = './data/Data/covid-chestxray-dataset/images/'
+	root_dir = './data/Data/covid-chest-xray-dataset/images/'
 	# field names  
 	fields = ['filename', 'finding', 'view', 'modality']  
 	filename = './gan_classifier/gan_data_tools/covid_chestxray_dataset_reader/covid-chest-xray-data.csv'
-	source_csv_file = './data/Data/covid-chestxray-dataset/metadata.csv'
+	source_csv_file = './data/Data/covid-chest-xray-dataset/metadata.csv'
 
 	covid_data = pd.read_csv(source_csv_file, usecols = fields)
 	covid_data.head(5)
