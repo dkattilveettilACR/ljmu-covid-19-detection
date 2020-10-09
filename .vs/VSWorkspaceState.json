@@ -4,13 +4,13 @@
     "\\cnn_classifier",
     "\\cnn_classifier\\data_tools",
     "\\cnn_classifier\\models",
+    "\\cnn_classifier\\tools",
     "\\data",
-    "\\data\\Data\\chest-xray-pneumonia\\chest_xray",
-    "\\data\\Data\\covid-ar-test",
-    "\\data\\Data\\covid-chestxray-dataset",
+    "\\data\\Data",
     "\\gan_classifier",
-    "\\gan_classifier\\gan_data_tools"
+    "\\gan_classifier\\gan_data_tools",
+    "\\gan_classifier\\gan_data_tools\\covid-ar-data-reader"
   ],
-  "SelectedNode": "\\.gitignore",
+  "SelectedNode": "\\cnn_classifier\\tools\\transfer.py",
   "PreviewInSolutionExplorer": false
 }

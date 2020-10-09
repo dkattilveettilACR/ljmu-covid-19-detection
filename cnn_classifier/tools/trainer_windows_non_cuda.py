@@ -48,7 +48,7 @@ class Trainer:
         if (torch.cuda.is_available()):
             self.net = CovidAID(combine_pneumonia).cuda()
         else:
-            self.net = CovidAID().to(self.device)
+            self.net = CovidAID(False).to(self.device)
         #
         if self.distributed:
             self.net = torch.nn.parallel.DistributedDataParallel(self.net,
@@ -419,7 +419,8 @@ class Trainer:
         if model is None: model = self.net
         new_state_dict = torch.load(checkpoint_path, map_location = (None if torch.cuda.is_available() else torch.device("cpu")))
         state_dict = model.state_dict()
-        print("CovidAID keys")
+        print("CovidAID keys:", len(state_dict.keys()))
+        print("Checkpoint keys:", len(new_state_dict.keys()))
         for key  in new_state_dict.keys():
             print(key)
         avoid = ['fc.weight', 'fc.bias']
@@ -434,8 +435,8 @@ class Trainer:
                     print('size not the same', key)
                     continue
                 state_dict[key] = new_state_dict[key]
-            else:
-                print('%s not found in CovidAID', key)
+            #else:
+            #    print('%s not found in CovidAID', key)
         model.load_state_dict(state_dict)
         #model.load_state_dict(torch.load(checkpoint_path, map_location = (None if torch.cuda.is_available() else torch.device("cpu"))))
 
@@ -443,7 +444,7 @@ class Trainer:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--local_rank", type=int) # For distributed processing
-    parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=True, default = 'train')
+    parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=False, default = 'train')
     parser.add_argument("--checkpoint", type=str, required=False, default="./cnn_classifier/models/CovidAID_4_class.pth")
     parser.add_argument("--combine_pneumonia", action='store_true', default=False)
     parser.add_argument("--save", type=str, default ="./cnn_classifier/models/CovidAID_4_class_new.pth" )
