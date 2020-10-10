@@ -6,6 +6,7 @@
     We randomly select a subset of patients for `test` and `val` sets.
    ```
    python data_tools/prepare_covid_data.py
+   python data_tools/prepare_covid_ar_data.py
    ```
    Modify the file and rerun to update the train-val-test data split.
 

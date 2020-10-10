@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	root_dir = './data/Data/covid-19-AR/'
 	image_dir = './data/Data/COVID-19-AR-images/'
 	# field names  
-	fields = ['filename', 'finding']  
+	fields = ['filename', 'finding', 'patient_id']  
 	source_csv_file = './gan_classifier/gan_data_tools/covid-ar-data-reader/covid-ar-data.csv'
 	# writing to csv file  
 	with open(source_csv_file, 'w', newline='') as csvfile:  
@@ -49,5 +49,5 @@ if __name__ == '__main__':
 				w.write(png_file, image_2d_scaled)
 
 			finding = 'covid pneumonia'
-			csvwriter.writerow([image_file, finding])
+			csvwriter.writerow([image_file, finding, patient_id])
 			

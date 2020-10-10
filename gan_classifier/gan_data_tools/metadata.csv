@@ -2869,7 +2869,6 @@ filename,finding
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1429_bacteria_3690.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1429_bacteria_3691.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1429_virus_2443.jpeg,2
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person142_virus_288.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1430_bacteria_3693.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1430_bacteria_3694.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1430_bacteria_3695.jpeg,1
@@ -2890,7 +2889,6 @@ filename,finding
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1438_virus_2452.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1439_bacteria_3722.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1439_virus_2453.jpeg,2
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person143_virus_289.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1440_bacteria_3723.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1441_bacteria_3724.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1441_virus_2454.jpeg,2
@@ -2940,8 +2938,6 @@ filename,finding
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1459_bacteria_3796.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1459_bacteria_3797.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1459_virus_2506.jpeg,2
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person145_virus_294.jpeg,2
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person145_virus_295.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1460_bacteria_3801.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1460_bacteria_3805.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1460_virus_2507.jpeg,2
@@ -2966,7 +2962,6 @@ filename,finding
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1469_bacteria_3824.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1469_bacteria_3827.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1469_virus_2547.jpeg,2
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person146_virus_296.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1470_bacteria_3829.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1470_bacteria_3830.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1471_bacteria_3831.jpeg,1
@@ -2986,7 +2981,6 @@ filename,finding
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1476_virus_2560.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1477_virus_2561.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1478_bacteria_3848.jpeg,1
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person147_virus_297.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1480_bacteria_3858.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1480_bacteria_3859.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1480_virus_2566.jpeg,2
@@ -3052,7 +3046,6 @@ filename,finding
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1497_virus_2607.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1499_bacteria_3915.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1499_virus_2609.jpeg,2
-./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person149_virus_299.jpeg,2
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person14_bacteria_51.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1500_bacteria_3916.jpeg,1
 ./data/Data/chest-xray-pneumonia/chest_xray\train\PNEUMONIA\person1500_virus_2610.jpeg,2
