@@ -134,8 +134,7 @@ def load_xrays(epochs=100, batch_size=32):
     (img_x, img_y) = 256, 256
     metadata_csv = './gan_classifier/gan_data_tools/metadata.csv'
     dataTrain = pd.read_csv(metadata_csv)
-    
-    
+    dataTrain = dataTrain[dataTrain['finding']==3]
 
     x_train = []
     # prepare label binarizer
@@ -223,7 +222,7 @@ def save_imgs(epoch):
 if __name__ == '__main__':
 
 
-    load_xrays(epochs=2, batch_size=16)
+    load_xrays(epochs=2, batch_size=10)
     generator.save('./model_weights/dcgan_covid/dcgen_covid.h5')
     discriminator.save('./model_weights/dcgan_covid/dcdis_covid.h5')
 
