@@ -163,8 +163,8 @@ class ACGAN():
 
         # Load the dataset
         (img_x, img_y) = 256, 256
-        metadata_csv = './gan_classifier/gan_data_tools/metadata.csv'
-        dataTrain = pd.read_csv(metadata_csv)
+        path = './data/train.txt'
+        dataTrain = pd.read_csv(path, delimiter = ' ', names=['file', 'finding'])
 
         print(dataTrain.info())
 
@@ -473,7 +473,7 @@ if __name__ == '__main__':
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--image_count", type=int, default=100)
     parser.add_argument("--label", type=int, default=3)
-    parser.add_argument("--sample_interval", type=int, default=1)
+    parser.add_argument("--sample_interval", type=int, default=50)
     
     
     args = parser.parse_args()
