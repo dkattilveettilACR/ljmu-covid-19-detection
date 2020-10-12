@@ -163,8 +163,8 @@ class ACGAN():
 
         # Load the dataset
         (img_x, img_y) = 256, 256
-        path = './data/train.txt'
-        dataTrain = pd.read_csv(path, delimiter = ' ', names=['file', 'finding'])
+        trainpath = './data/train.txt'
+        dataTrain = pd.read_csv(trainpath, delimiter = ' ', names=['filename', 'finding'])
 
         print(dataTrain.info())
 
@@ -322,7 +322,7 @@ class ACGAN():
 
     def evaluate(self, path, batch_size=64, cm_path='cm', roc_path='roc'):
         
-        dataTest = pd.read_csv(path, delimiter = ' ', names=['file', 'finding'])
+        dataTest = pd.read_csv(path, delimiter = ' ', names=['filename', 'finding'])
         datacount = len(dataTest.index)
         steps = math.ceil(datacount/batch_size)
         generator = self.generate_arrays_from_dataframe(dataTest,batch_size)
