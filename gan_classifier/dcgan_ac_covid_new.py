@@ -188,8 +188,8 @@ class ACGAN():
                 # DEBUG
                 # print("shape of image: {}".format(arr1.shape))
                 x_train.append(arr1)
-                label = row["finding"];
-                y_train.append(label);
+                label = row["finding"]
+                y_train.append(label)
                 count += 1
 
                 # DEBUG
@@ -307,8 +307,8 @@ class ACGAN():
                     # DEBUG
                     # print("shape of image: {}".format(arr1.shape))
                     x_test.append(arr1)
-                    label = row[1];
-                    y_test.append(label);
+                    label = row[1]
+                    y_test.append(label)
                     batchcount += 1
                     if (batchcount == batchsize or total_count == data_set_count):
                         X_test = np.asarray(x_test)
