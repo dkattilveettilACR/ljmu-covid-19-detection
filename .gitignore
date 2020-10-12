@@ -144,3 +144,4 @@ static
 
 # custom
 /data/Data/COVID-19-AR
+/gan_classifier/sample_gan.py

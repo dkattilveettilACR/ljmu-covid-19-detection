@@ -19,7 +19,8 @@ import os.path
 from os import path
 import scipy.misc
 import argparse
-
+import warnings
+warnings.filterwarnings("ignore")
 
 class GAN():
     def __init__(self):

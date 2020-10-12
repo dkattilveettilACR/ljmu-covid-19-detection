@@ -27,6 +27,8 @@ import math
 import seaborn as sn
 from scipy import interp
 from itertools import cycle
+import warnings
+warnings.filterwarnings("ignore")
 
 class ACGAN():
     def __init__(self):
@@ -227,6 +229,7 @@ class ACGAN():
 
             # Train the discriminator
             d_loss_real = self.discriminator.train_on_batch(imgs, [valid, img_labels])
+            print ("Real data performance: %d [D loss: %f, acc.: %.2f%%, val_acc: %.2f%%]"  % (epoch, d_loss_real[0], 100*d_loss_real[3], 100*d_loss_real[4]))
             d_loss_fake = self.discriminator.train_on_batch(gen_imgs, [fake, sampled_labels])
             d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
 
@@ -239,7 +242,7 @@ class ACGAN():
 
             # Plot the progress
             # print average of real and fake [ training + validation loss, training accuracy, validation accuracy, generator loss
-            print ("%d [D loss: %f, acc.: %.2f%%, val_acc: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[3], 100*d_loss[4], g_loss[0]))
+            print ("Combined performance: %d [D loss: %f, acc.: %.2f%%, val_acc: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[3], 100*d_loss[4], g_loss[0]))
 
             # If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
