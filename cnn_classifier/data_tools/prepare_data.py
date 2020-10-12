@@ -16,6 +16,7 @@ args = parser.parse_args()
 COVID19_DATA_PATH = "./data/covid19"
 COVID19_AR_DATA_PATH = "./data/covid19_ar"
 PNEUMONIA_DATA_PATH = "./data/Data/chest-xray-pneumonia/chest_xray/"
+GENERATED_DATA_PATH = "./data/generated/dcgan_covid"
 DATA_PATH = "./data"
 
 # Assert that the data directories are present
@@ -29,6 +30,13 @@ def create_list (split):
     assert split in ['train', 'test', 'val']
 
     l = []
+
+    # add generated images
+    if (split == 'train'):
+        for f in glob.glob(os.path.join(GENERATED_DATA_PATH, 'genxray_*')):
+            f = f.replace("\\", "/")
+            l.append((f, 3)) # Class 0
+
     # Prepare list using kaggle pneumonia dataset
     for f in glob.glob(os.path.join(PNEUMONIA_DATA_PATH, split, 'NORMAL', '*')):
         f = f.replace("\\", "/")

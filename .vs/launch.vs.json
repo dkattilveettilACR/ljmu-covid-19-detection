@@ -18,13 +18,27 @@
       "type": "python",
       "interpreter": "(default)",
       "interpreterArguments": "",
-      "scriptArguments": "",
+      //"scriptArguments": "--mode=train --bs=10 --epochs=2",
+      "scriptArguments": "--mode=generate",
       "env": {},
       "nativeDebug": false,
       "webBrowserUrl": "",
       "project": "gan_classifier\\dcgan_covid.py",
       "projectTarget": "",
       "name": "dcgan_covid.py"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      //"scriptArguments": "--mode=train --bs=10 --epochs=2",
+      "scriptArguments": "--mode=evaluate --bs=10",
+      "env": {},
+      "nativeDebug": false,
+      "webBrowserUrl": "",
+      "project": "gan_classifier\\dcgan_ac_covid_new.py",
+      "projectTarget": "",
+      "name": "dcgan_ac_covid_new.py"
     }
   ]
 }
