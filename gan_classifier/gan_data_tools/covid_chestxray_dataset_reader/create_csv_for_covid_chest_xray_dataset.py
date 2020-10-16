@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	covid_data.info()
 	
 	#update finding to normal
-	covid_data.loc[covid_data['finding'] == 'NO FINDING' , 'FINDING'] = 'normal'
+	covid_data.loc[covid_data['finding'] == 'NO FINDING' , 'finding'] = 'normal'
 	
 	# update finding to viral pneumonia
 	viral_pneumonia = ['HERPES PNEUMONIA', 'HERPES PNEUMONIA', 'ARDS', 'INFLUENZA', 'MERS-COV', 
