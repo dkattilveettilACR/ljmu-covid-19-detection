@@ -75,32 +75,28 @@ class ACGAN():
 
         model = Sequential()
 
-        model.add(Dense(1024 * 4 * 4, activation="relu", input_dim=self.latent_dim))
-        model.add(Reshape((4, 4, 1024)))
+        model.add(Dense(1024 * 8 * 8, activation="relu", input_dim=self.latent_dim))
+        model.add(Reshape((8, 8, 1024)))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(512, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(64, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(32, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
-        model.add(UpSampling2D())
-        model.add(Conv2DTranspose(16, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(Conv2DTranspose(1, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(Activation("tanh"))
 
@@ -119,11 +115,7 @@ class ACGAN():
 
         model = Sequential()
 
-        model.add(Conv2D(16, kernel_size=3, strides=(2, 2), input_shape=self.img_shape, padding="same"))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(32, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
+        model.add(Conv2D(32, kernel_size=3, strides=(2, 2), input_shape=self.img_shape, padding="same"))
         model.add(LeakyReLU(alpha=0.2))
         model.add(Dropout(0.25))
         model.add(Conv2D(64, kernel_size=3, strides=(2, 2), padding="same"))
@@ -161,12 +153,21 @@ class ACGAN():
 
         return Model(img, [validity, label])
 
-    def train(self, epochs, batch_size=128, sample_interval=1):
+    def train(self, epochs, batch_size=128, sample_interval=1, equal_class=True):
 
         # Load the dataset
         (img_x, img_y) = 256, 256
         trainpath = './data/train.txt'
         dataTrain = pd.read_csv(trainpath, delimiter = ' ', names=['filename', 'finding'])
+        
+        if (equal_class == True):
+            dataCovid = dataTrain[dataTrain['finding']==3]
+            covidDataCount = len(dataCovid.index)
+            dataNormal = dataTrain[dataTrain['finding']==3].sample(n = covidDataCount)
+            dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covidDataCount)
+            dataViral = dataTrain[dataTrain['finding']==2].sample(n = covidDataCount)
+
+            dataTrain = pd.concat([dataNormal, dataBacterial, dataViral, dataCovid], axis = 0)
 
         print(dataTrain.info())
 
@@ -477,12 +478,13 @@ if __name__ == '__main__':
     parser.add_argument("--image_count", type=int, default=100)
     parser.add_argument("--label", type=int, default=3)
     parser.add_argument("--sample_interval", type=int, default=50)
+    parser.add_argument("--equal_class", type=bool, default=True)
     
     
     args = parser.parse_args()
     acgan = ACGAN()
     if args.mode == 'train':
-        acgan.train(epochs=args.epochs, batch_size=args.bs, sample_interval = args.sample_interval)
+        acgan.train(epochs=args.epochs, batch_size=args.bs, sample_interval = args.sample_interval, equal_class = args.equal_class)
     else:
         #json_file = open('./gan_classifier/model_weights/dcgan_ac_covid/discriminator.json', 'r')
         #loaded_model_json = json_file.read()
