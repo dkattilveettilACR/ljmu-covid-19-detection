@@ -223,7 +223,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=['train', 'generate'], required=True, default = 'train')
     parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_covid/dcgen_covid.h5")
-    parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/dcgan_covid")
+    parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/dcgan_covid/")
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--bs", type=int, default=8)
     parser.add_argument("--epochs", type=int, default=10)
@@ -238,10 +238,11 @@ if __name__ == '__main__':
         gan.generator.save(args.save + 'dcgen_covid.h5')
         gan.discriminator.save(args.save + 'dcdis_covid.h5')
     else :
+        import math
         model = keras.models.load_model(args.checkpoint)
         # at the end, loop per class, per 1000 images
         cnt = args.image_count
-        batch_count = int(cnt/10)
+        batch_count = int(math.ceil(cnt/10))
         for num in range(batch_count):
             noise1 = np.random.normal(0, 1, (10, 100))
             gen_imgs = model.predict(noise1)
