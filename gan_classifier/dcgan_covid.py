@@ -90,7 +90,6 @@ class GAN():
 
         noise = Input(shape=(self.latent_dim,))
         img = model(noise)
-
         return Model(noise, img)
 
 
@@ -128,7 +127,6 @@ class GAN():
 
         img = Input(shape=self.img_shape)
         validity = model(img)
-
         return Model(img, validity)
 
 
@@ -166,7 +164,6 @@ class GAN():
 
         valid1 = np.ones((batch_size, 1))
         fake = np.zeros((batch_size, 1))
-        save_interval = 1
 
         for epoch in range(epochs):
 
@@ -198,7 +195,7 @@ class GAN():
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
 
             #If at save interval => save generated image samples
-            if epoch % save_interval == 0:
+            if epoch % sample_interval == 0:
                 self.save_imgs(epoch)
 
     def save_imgs(self, epoch):
@@ -226,17 +223,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=['train', 'generate'], required=True, default = 'train')
     parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_covid/dcgen_covid.h5")
-    parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/")
+    parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/dcgan_covid")
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--bs", type=int, default=8)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--image_count", type=int, default=100)
+    parser.add_argument("--sample_interval", type=int, default=100)
     
     args = parser.parse_args()
 
     if args.mode == 'train':
         gan = GAN()
-        gan.load_xrays(epochs=args.epochs, batch_size= args.bs)
+        gan.load_xrays(epochs=args.epochs, batch_size= args.bs, sample_interval = args.sample_interval)
         gan.generator.save(args.save + 'dcgen_covid.h5')
         gan.discriminator.save(args.save + 'dcdis_covid.h5')
     else :
