@@ -78,7 +78,7 @@ def create_list (split, use_generated=False):
                 l.append((f, 3)) # Class 3
 
     if ((use_generated==True) and (split=='train')):
-        write_file = 'train_generated_list.txt'
+        write_file = 'train_generated.txt'
     else:
         write_file = '%s.txt'%split
     with open(os.path.join(DATA_PATH, write_file), 'w') as f:
