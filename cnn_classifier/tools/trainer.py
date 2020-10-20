@@ -114,7 +114,8 @@ class Trainer:
         #                 lr=LR, momentum=0.9)
         optimizer = optim.Adam(filter(lambda p: p.requires_grad, self.net.parameters()), lr=LR)
 
-
+        val_loss = 0.0
+        old_val_loss = 100.0
         for epoch in range(start_epoch, NUM_EPOCHS):
             print("Epoch:", epoch)
             # switch to train mode
@@ -149,6 +150,7 @@ class Trainer:
             
             # Running on validation set
             self.net.eval()
+           
             val_loss = 0.0
             for i, (inputs, target) in tqdm(enumerate(val_loader), total=len(val_dataset)/BATCH_SIZE):
                 # inputs = inputs.to(self.device)
@@ -190,9 +192,14 @@ class Trainer:
                 with open(log_file, 'a') as f:
                     f.write("{}\n".format(log))
 
-            model_path = os.path.join(save_path, 'epoch_%d.pth'%(epoch+1))
-            print("Saving model:", model_path)
-            self.save_model(model_path)
+
+            if (val_loss < old_val_loss):
+                #model_path = os.path.join(save_path, 'epoch_%d.pth'%(epoch+1))
+                model_path = os.path.join(save_path, 'best_model.pth')
+                print("Saving model:", model_path)
+                self.save_model(model_path)
+
+            old_val_loss = val_loss
             
         print ('Finished Training')
 
