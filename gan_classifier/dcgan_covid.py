@@ -214,6 +214,8 @@ class GAN():
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig("./data/generated/dcgan_covid/sample_%d.png" % epoch)
+        self.gan.generator.save(args.save + "dcgen_covid_%d.h5"  % epoch)
+        self.gan.discriminator.save(args.save + "dcdis_covid_%d.h5"  % epoch)
         plt.close()
 
 
@@ -235,8 +237,7 @@ if __name__ == '__main__':
     if args.mode == 'train':
         gan = GAN()
         gan.load_xrays(epochs=args.epochs, batch_size= args.bs, sample_interval = args.sample_interval)
-        gan.generator.save(args.save + 'dcgen_covid.h5')
-        gan.discriminator.save(args.save + 'dcdis_covid.h5')
+       
     else :
         import math
         model = keras.models.load_model(args.checkpoint)
@@ -244,15 +245,16 @@ if __name__ == '__main__':
         cnt = args.image_count
         batch_count = int(math.ceil(cnt/10))
         for num in range(batch_count):
-            noise1 = np.random.normal(0, 1, (10, 100))
+            if (cnt < 10):
+                batch_images = cnt
+            else:
+                batch_images = 10
+            cnt = cnt - batch_images
+            noise1 = np.random.normal(0, 1, (batch_images, 100))
             gen_imgs = model.predict(noise1)
             # Rescale images 0 - 1
             gen_imgs = 0.5 * gen_imgs + 0.5
-            if (cnt < 10):
-                batch_images == cnt
-            else 
-                batch_images = 10
-            cnt -= batch_images
+            
             for i in range(batch_images):
                 img = gen_imgs[i,:,:,0]
                 img_index = i + num * 10

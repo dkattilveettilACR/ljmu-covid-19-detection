@@ -247,7 +247,7 @@ class ACGAN():
 
             # If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
-                self.save_model()
+                self.save_model(epoch+1)
                 self.sample_images(epoch+1)
 
     def sample_images(self, epoch):
@@ -268,19 +268,19 @@ class ACGAN():
         fig.savefig("./data/generated/dcgan_ac_covid/xrays_%d.png" % epoch)
         plt.close()
 
-    def save_model(self):
+    def save_model(self, epoch):
 
-        def save(model, model_name):
-            model_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s.json" % model_name
-            weights_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s_weights.hdf5" % model_name
+        def save(model, model_name, epoch):
+            model_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s_%d.json" % (model_name, epoch)
+            weights_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s_weights_%d.hdf5" % (model_name, epoch)
             options = {"file_arch": model_path,
                         "file_weight": weights_path}
             json_string = model.to_json()
             open(options['file_arch'], 'w').write(json_string)
             model.save_weights(options['file_weight'])
 
-        save(self.generator, "generator")
-        save(self.discriminator, "discriminator")
+        save(self.generator, "generator", epoch)
+        save(self.discriminator, "discriminator", epoch)
 
     def generate_arrays_from_dataframe(self, dataTest, batchsize):
         while True:

@@ -19,7 +19,7 @@
       "interpreter": "(default)",
       "interpreterArguments": "",
       //"scriptArguments": "--mode=train --bs=10 --epochs=2",
-      "scriptArguments": "--mode=generate",
+      "scriptArguments": "--mode=generate --image_count=14",
       "env": {},
       "nativeDebug": false,
       "webBrowserUrl": "",
