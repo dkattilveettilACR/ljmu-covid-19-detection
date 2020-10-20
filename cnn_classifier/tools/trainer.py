@@ -441,7 +441,7 @@ if __name__ == '__main__':
         trainer.evaluate(TEST_IMAGE_LIST, cm_path=args.cm_path, roc_path=args.roc_path)
     elif args.mode == 'train':
         assert args.save is not None
-        trainer.train(TRAIN_IMAGE_LIST, VAL_IMAGE_LIST, BATCH_SIZE=args.bs, NUM_EPOCHS=300, LR=args.lr,
+        trainer.train(TRAIN_IMAGE_LIST, VAL_IMAGE_LIST, BATCH_SIZE=args.bs, NUM_EPOCHS=100, LR=args.lr,
                         start_epoch=args.start, save_path=args.save, freeze_feature_layers=args.freeze)
     else:
         trainer.F1(TEST_DIR, './cnn_classifier/models/samples.txt')

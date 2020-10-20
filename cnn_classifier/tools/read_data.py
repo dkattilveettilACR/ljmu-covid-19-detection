@@ -104,7 +104,7 @@ class ChestXrayDataSet(Dataset):
             self.loss_weight_minus = torch.FloatTensor([self.num_normal, self.num_pneumonia, self.num_covid]).unsqueeze(0).cuda() / self.total
             self.loss_weight_plus = 1.0 - self.loss_weight_minus
         else:
-            if equal_sampling:
+            if equal_sampling == True:
                 covid_factor = 1.0
             else:
                 covid_factor = 2.0

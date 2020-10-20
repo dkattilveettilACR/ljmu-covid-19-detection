@@ -29,14 +29,12 @@ for d in [COVID19_DATA_PATH, COVID19_AR_DATA_PATH, PNEUMONIA_DATA_PATH, DATA_PAT
 
 def create_list (split, use_generated=False):
     
-    if use_generated:
-        assert split in ['train_generated', 'test', 'val']
-    else:
-        assert split in ['train', 'test', 'val']
+
+    assert split in ['train', 'test', 'val']
     l = []
 
     # add generated images
-    if (split == 'train_generated'):
+    if ((use_generated==True) and (split=='train')):
         for f in glob.glob(os.path.join(GENERATED_DATA_PATH, 'genxray_*')):
             f = f.replace("\\", "/")
             l.append((f, 3)) # Class 0
@@ -68,6 +66,7 @@ def create_list (split, use_generated=False):
                 l.append((f, 3)) # Class 3
 
     # Prepare list using covid AR dataset
+    
     covid_ar_file = os.path.join(COVID19_AR_DATA_PATH, '%s_list.txt'%split)
     with open(covid_ar_file, 'r') as cf:
         for f in cf.readlines():
@@ -78,14 +77,13 @@ def create_list (split, use_generated=False):
             else:
                 l.append((f, 3)) # Class 3
 
-    with open(os.path.join(DATA_PATH, '%s.txt'%split), 'w') as f:
+    if ((use_generated==True) and (split=='train')):
+        write_file = 'train_generated_list.txt'
+    else:
+        write_file = '%s.txt'%split
+    with open(os.path.join(DATA_PATH, write_file), 'w') as f:
         for item in l:
-            
             f.write("%s %d\n" % item)
 
-if args.use_generated:
-    for split in ['train_generated', 'test', 'val']:
-        create_list(split)
-else:
-    for split in ['train', 'test', 'val']:
-        create_list(split)
+for split in ['train', 'test', 'val']:
+    create_list(split, args.use_generated)
