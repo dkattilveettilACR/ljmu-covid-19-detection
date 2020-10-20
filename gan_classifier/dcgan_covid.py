@@ -195,8 +195,8 @@ class GAN():
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
 
             #If at save interval => save generated image samples
-            if epoch % sample_interval == 0:
-                self.save_imgs(epoch)
+            if (epoch+1) % sample_interval == 0:
+                self.save_imgs(epoch+1)
 
     def save_imgs(self, epoch):
         r, c = 2, 2
@@ -248,9 +248,16 @@ if __name__ == '__main__':
             gen_imgs = model.predict(noise1)
             # Rescale images 0 - 1
             gen_imgs = 0.5 * gen_imgs + 0.5
-            for i in range(10):
+            if (cnt < 10):
+                batch_images == cnt
+            else 
+                batch_images = 10
+            cnt -= batch_images
+            for i in range(batch_images):
                 img = gen_imgs[i,:,:,0]
                 img_index = i + num * 10
                 scipy.misc.imsave("./data/generated/dcgan_covid/genxray_" + str(img_index)+".png", img)
+
+
 
 

@@ -64,7 +64,7 @@ class ChestXrayDataSetTest(Dataset):
 
 
 class ChestXrayDataSet(Dataset):
-    def __init__(self, image_list_file, transform=None, combine_pneumonia=False):
+    def __init__(self, image_list_file, transform=None, combine_pneumonia=False, equal_sampling=False):
         """
         Create the Data Loader.
         Since class 3 (Covid) has limited data, dataset size will be accordingly at train time.
@@ -104,7 +104,10 @@ class ChestXrayDataSet(Dataset):
             self.loss_weight_minus = torch.FloatTensor([self.num_normal, self.num_pneumonia, self.num_covid]).unsqueeze(0).cuda() / self.total
             self.loss_weight_plus = 1.0 - self.loss_weight_minus
         else:
-            covid_factor = 5.0
+            if equal_sampling:
+                covid_factor = 1.0
+            else:
+                covid_factor = 2.0
             self.num_normal = int(self.num_covid * covid_factor)
             self.num_viral = int(self.num_covid * covid_factor)
             self.num_bact = int(self.num_covid * covid_factor)

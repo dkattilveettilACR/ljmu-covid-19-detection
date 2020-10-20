@@ -11,6 +11,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--combine_pneumonia", action='store_true', default=False)
+parser.add_argument("--use_generated", default=False)
 args = parser.parse_args()
 
 COVID19_DATA_PATH = "./data/covid19"
@@ -26,13 +27,16 @@ for d in [COVID19_DATA_PATH, COVID19_AR_DATA_PATH, PNEUMONIA_DATA_PATH, DATA_PAT
     except:
         print ("Directory %s does not exists" % d)
 
-def create_list (split):
-    assert split in ['train', 'test', 'val']
-
+def create_list (split, use_generated=False):
+    
+    if use_generated:
+        assert split in ['train_generated', 'test', 'val']
+    else:
+        assert split in ['train', 'test', 'val']
     l = []
 
     # add generated images
-    if (split == 'train'):
+    if (split == 'train_generated'):
         for f in glob.glob(os.path.join(GENERATED_DATA_PATH, 'genxray_*')):
             f = f.replace("\\", "/")
             l.append((f, 3)) # Class 0
@@ -79,6 +83,9 @@ def create_list (split):
             
             f.write("%s %d\n" % item)
 
-for split in ['train', 'test', 'val']:
-    create_list(split)
-    
+if args.use_generated:
+    for split in ['train_generated', 'test', 'val']:
+        create_list(split)
+else:
+    for split in ['train', 'test', 'val']:
+        create_list(split)

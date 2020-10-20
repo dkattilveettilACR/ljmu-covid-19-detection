@@ -27,7 +27,7 @@ from covidaid import CovidAID
 from tqdm import tqdm
 
 class Trainer:
-    def __init__ (self, local_rank=None, checkpoint=None, combine_pneumonia=False):
+    def __init__ (self, local_rank=None, checkpoint=None, combine_pneumonia=False, equal_sampling= False):
         """
         Trainer for the CovidAID
         """
@@ -42,6 +42,8 @@ class Trainer:
 
         # Using 2 classes for pneumonia vs 1 class
         self.combine_pneumonia = combine_pneumonia
+
+        self.equal_sampling = equal_sampling
 
         # self.net = CovidAID().to(self.device)
         self.net = CovidAID(combine_pneumonia).cuda()
@@ -71,7 +73,8 @@ class Trainer:
                                             transforms.Lambda
                                             (lambda crops: torch.stack([normalize(crop) for crop in crops]))
                                         ]),
-                                        combine_pneumonia=self.combine_pneumonia)
+                                        combine_pneumonia=self.combine_pneumonia,
+                                        equal_sampling=self.equal_sampling)
         if self.distributed:
             sampler = DistributedSampler(train_dataset)
             train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE,
@@ -90,7 +93,8 @@ class Trainer:
                                             transforms.Lambda
                                             (lambda crops: torch.stack([normalize(crop) for crop in crops]))
                                         ]),
-                                        combine_pneumonia=self.combine_pneumonia)
+                                        combine_pneumonia=self.combine_pneumonia,
+                                        equal_sampling=self.equal_sampling)
         if self.distributed:
             sampler = DistributedSampler(val_dataset)
             val_loader = DataLoader(dataset=val_dataset, batch_size=BATCH_SIZE,
@@ -408,6 +412,7 @@ if __name__ == '__main__':
     parser.add_argument("--mode", choices=['train', 'test', 'f1'], required=True, default = 'train')
     parser.add_argument("--checkpoint", type=str, required=True, default=".\cnn_classifier\models\CovidAID_4_class.pth")
     parser.add_argument("--combine_pneumonia", action='store_true', default=False)
+    parser.add_argument("--equal_sampling", default=False)
     parser.add_argument("--save", type=str, default = ".\cnn_classifier\models")
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--lr", type=float, default=1e-4)
@@ -419,7 +424,10 @@ if __name__ == '__main__':
     # parser.add_argment("--torch_version", "--tv", choices=["0.3", "new"], default="0.3")
     args = parser.parse_args()
 
-    TRAIN_IMAGE_LIST = './data/train.txt'
+    if args.equal_sampling:
+        TRAIN_IMAGE_LIST = './data/train_generated.txt'
+    else:
+        TRAIN_IMAGE_LIST = './data/train.txt'
     VAL_IMAGE_LIST = './data/val.txt'
     TEST_IMAGE_LIST = './data/test.txt'
     TEST_DIR = './data/samples'
@@ -428,7 +436,7 @@ if __name__ == '__main__':
     if args.local_rank is not None:
         torch.distributed.init_process_group(backend='nccl')
     # args.checkpoint = None
-    trainer = Trainer(local_rank=args.local_rank, checkpoint=args.checkpoint, combine_pneumonia=args.combine_pneumonia)
+    trainer = Trainer(local_rank=args.local_rank, checkpoint=args.checkpoint, combine_pneumonia=args.combine_pneumonia, equal_sampling = args.equal_sampling)
     if args.mode == 'test':
         trainer.evaluate(TEST_IMAGE_LIST, cm_path=args.cm_path, roc_path=args.roc_path)
     elif args.mode == 'train':
