@@ -198,8 +198,7 @@ class Trainer:
                 model_path = os.path.join(save_path, 'best_model.pth')
                 print("Saving model:", model_path)
                 self.save_model(model_path)
-
-            old_val_loss = val_loss
+                old_val_loss = val_loss
             
         print ('Finished Training')
 

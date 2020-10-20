@@ -358,7 +358,7 @@ class ACGAN():
     def plot_confusion_matrix(self, y_true, y_pred, labels, cm_path):
         norm_cm = confusion_matrix(y_true, y_pred, normalize='true')
         norm_df_cm = pd.DataFrame(norm_cm, index=labels, columns=labels)
-        plt.figure(figsize = (10,7))
+        plt.figure(figsize = (10,10))
         sn.heatmap(norm_df_cm, annot=True, fmt='.2f', square=True, cmap=plt.cm.Blues)
         plt.xlabel("Predicted")
         plt.ylabel("Ground Truth")
