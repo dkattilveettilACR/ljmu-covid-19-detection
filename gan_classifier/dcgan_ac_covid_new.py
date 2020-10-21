@@ -29,6 +29,8 @@ from scipy import interp
 from itertools import cycle
 import warnings
 warnings.filterwarnings("ignore")
+from tensorflow.python.keras.losses import sparse_categorical_crossentropy
+import tensorflow as tf
 
 class ACGAN():
     def __init__(self):
@@ -204,6 +206,8 @@ class ACGAN():
         valid = np.ones((batch_size, 1))
         fake = np.zeros((batch_size, 1))
 
+        val_loss = 0
+        old_val_loss = 100
 
         for epoch in range(epochs):
 
@@ -244,11 +248,18 @@ class ACGAN():
             # Plot the progress
             # print average of real and fake [ training + validation loss, training accuracy, validation accuracy, generator loss
             print ("Combined performance: %d [D loss: %f, acc.: %.2f%%, val_acc: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[3], 100*d_loss[4], g_loss[0]))
-
-            # If at save interval => save generated image samples
+            self.save_model()
+            #calculate validation loss and save best model
+            val_loss = self.validate('./data/val.txt', batch_size)
+            if (val_loss < old_val_loss):
+                print("Old val loss: %.2f%%, new val loss: %.2f%%" % (val_loss, old_val_loss))
+                self.save_model()
+                old_val_loss = val_loss
+            
+                # If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
-                self.save_model(epoch+1)
                 self.sample_images(epoch+1)
+           
 
     def sample_images(self, epoch):
         r, c = 2, 2
@@ -268,25 +279,24 @@ class ACGAN():
         fig.savefig("./data/generated/dcgan_ac_covid/xrays_%d.png" % epoch)
         plt.close()
 
-    def save_model(self, epoch):
+    def save_model(self):
 
-        def save(model, model_name, epoch):
-            model_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s_%d.json" % (model_name, epoch)
-            weights_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s_weights_%d.hdf5" % (model_name, epoch)
+        def save(model, model_name):
+            model_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s.json" % model_name
+            weights_path = "./gan_classifier/model_weights/dcgan_ac_covid/%s_weights.hdf5" % model_name
             options = {"file_arch": model_path,
                         "file_weight": weights_path}
             json_string = model.to_json()
             open(options['file_arch'], 'w').write(json_string)
             model.save_weights(options['file_weight'])
 
-        save(self.generator, "generator", epoch)
-        save(self.discriminator, "discriminator", epoch)
+        save(self.generator, "generator")
+        save(self.discriminator, "discriminator")
 
     def generate_arrays_from_dataframe(self, dataTest, batchsize):
         while True:
             # Load the dataset
             (img_x, img_y) = 256, 256
-            print(dataTest.info())
 
             x_test = []
             y_test = []
@@ -324,9 +334,26 @@ class ACGAN():
                 else:
                     print("file not found:", img1)
 
+    def validate(self, path, batch_size=64):
+        
+        data_validation = pd.read_csv(path, delimiter = ' ', names=['filename', 'finding'])
+        data_count = len(data_validation.index)
+        steps = math.ceil(data_count/batch_size)
+        generator = self.generate_arrays_from_dataframe(data_validation,batch_size)
+        pred = self.discriminator.predict_generator(generator, steps =int(steps))
+       
+        gt = data_validation['finding'].to_numpy()
+        val_loss = sparse_categorical_crossentropy(tf.convert_to_tensor(gt), tf.convert_to_tensor(pred[1]))
+        val_loss_numpy = val_loss.eval(session=tf.compat.v1.Session())
+        total_val_loss = np.sum(val_loss_numpy)/data_count
+        return total_val_loss
+
+        
+
     def evaluate(self, path, batch_size=64, cm_path='cm', roc_path='roc'):
         
         dataTest = pd.read_csv(path, delimiter = ' ', names=['filename', 'finding'])
+        print(dataTest.info())
         datacount = len(dataTest.index)
         steps = math.ceil(datacount/batch_size)
         generator = self.generate_arrays_from_dataframe(dataTest,batch_size)
@@ -467,19 +494,18 @@ class ACGAN():
 
 
 if __name__ == '__main__':
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=['train', 'evaluate', 'generate'], required=True, default = 'train')
     parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_ac_covid/discriminator_weights.hdf5")
     parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/")
     parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--bs", type=int, default=8)
+    parser.add_argument("--bs", type=int, default=10)
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--image_count", type=int, default=100)
     parser.add_argument("--label", type=int, default=3)
     parser.add_argument("--sample_interval", type=int, default=50)
-    parser.add_argument("--equal_class", type=bool, default=True)
-    
+    parser.add_argument("--equal_class", type=bool, default=False)
     
     args = parser.parse_args()
     acgan = ACGAN()
