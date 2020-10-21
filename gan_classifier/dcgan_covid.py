@@ -21,6 +21,9 @@ import scipy.misc
 import argparse
 import warnings
 warnings.filterwarnings("ignore")
+import random
+import math
+from keras.utils.generic_utils import Progbar
 
 class GAN():
     def __init__(self):
@@ -162,39 +165,63 @@ class GAN():
 
         x_train = x_train.reshape(count, img_y, img_x, 1)
 
-        valid1 = np.ones((batch_size, 1))
-        fake = np.zeros((batch_size, 1))
-
         for epoch in range(epochs):
+            print('Epoch {} of {}'.format(epoch + 1, epochs))
+            nb_batches = int(math.ceil(count/batch_size))
+            progress_bar = Progbar(target=nb_batches)
+            rem_images = count
+            batch_count = 0
+            idx = np.random.randint(0, count, count)
 
-            # ---------------------
-            #  Train Discriminator
-            # ---------------------
+            epoch_gen_loss = []
+            epoch_disc_loss = []
 
-            # Select a random half of images
-            idx = np.random.randint(0, x_train.shape[0], batch_size)
-            imgs = x_train[idx]
+            for index in range(nb_batches):
+                
+                progress_bar.update(index)
 
-            # Sample noise and generate a batch of new images
-            noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
-            gen_imgs = self.generator.predict(noise)
+                if (rem_images < batch_size):
+                    batch_count = rem_images
+                else:
+                    batch_count = batch_size
 
-            # Train the discriminator (real classified as ones and generated as zeros)
-            d_loss_real = self.discriminator.train_on_batch(imgs, valid1)
-            d_loss_fake = self.discriminator.train_on_batch(gen_imgs, fake)
-            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                valid1 = np.ones((batch_count, 1))
+                
+                fake = np.zeros((batch_count, 1))
+                
+                # ---------------------
+                #  Train Discriminator
+                # ---------------------
+                batch_index = index * batch_size
+                batch_idx = idx[batch_index : batch_index + batch_count]
+                imgs = x_train[batch_idx]
 
-            # ---------------------
-            #  Train Generator
-            # ---------------------
+                # Sample noise and generate a batch of new images
+                noise = np.random.normal(0, 1, (batch_count, self.latent_dim))
+                gen_imgs = self.generator.predict(noise)
 
-            # Train the generator (wants discriminator to mistake images as real)
-            g_loss = self.gan.train_on_batch(noise, valid1)
+                # Train the discriminator (real classified as ones and generated as zeros)
+                d_loss_real = self.discriminator.train_on_batch(imgs, valid1)
+                d_loss_fake = self.discriminator.train_on_batch(gen_imgs, fake)
+                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                epoch_disc_loss.append(d_loss)
 
-            # Plot the progress
-            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
+                # ---------------------
+                #  Train Generator
+                # ---------------------
+                # Train the generator (wants discriminator to mistake images as real)
+                g_loss = self.gan.train_on_batch(noise, valid1)
+                epoch_gen_loss.append(g_loss)
+
+                # Plot the progress
+                
+                rem_images -= batch_count
 
             #If at save interval => save generated image samples
+            generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
+            discriminator_train_loss = np.mean(np.array(epoch_disc_loss), axis=0)
+
+            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, discriminator_train_loss[0], 100 * discriminator_train_loss[1], generator_train_loss))
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
 
@@ -214,8 +241,8 @@ class GAN():
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig("./data/generated/dcgan_covid/sample_%d.png" % epoch)
-        self.gan.generator.save(args.save + "dcgen_covid_%d.h5"  % epoch)
-        self.gan.discriminator.save(args.save + "dcdis_covid_%d.h5"  % epoch)
+        self.generator.save(args.save + "dcgen_covid_%d.h5"  % epoch)
+        self.discriminator.save(args.save + "dcdis_covid_%d.h5"  % epoch)
         plt.close()
 
 

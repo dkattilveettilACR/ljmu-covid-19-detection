@@ -1,10 +1,6 @@
 from __future__ import print_function, division
 
-from keras.datasets import mnist
-from keras.layers import Input, Dense, Reshape, Flatten, Dropout, multiply
-from keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D
-from keras.layers.advanced_activations import LeakyReLU
-from keras.layers.convolutional import UpSampling2D, Conv2D, Conv2DTranspose
+from keras.layers import UpSampling2D, Conv2D, Conv2DTranspose, LeakyReLU, Input, Dense, Reshape, Flatten, Dropout, multiply, BatchNormalization, Activation, Embedding, ZeroPadding2D
 from keras.models import Sequential, Model, load_model, model_from_json
 from keras.optimizers import Adam
 
@@ -31,6 +27,9 @@ import warnings
 warnings.filterwarnings("ignore")
 from tensorflow.python.keras.losses import sparse_categorical_crossentropy
 import tensorflow as tf
+from tensorflow.python.client import device_lib
+import random
+from keras.utils.generic_utils import Progbar
 
 class ACGAN():
     def __init__(self):
@@ -203,56 +202,79 @@ class ACGAN():
         y_train = np.asarray(y_train)
         y_train = y_train.reshape(-1, 1)
 
-        valid = np.ones((batch_size, 1))
-        fake = np.zeros((batch_size, 1))
-
         val_loss = 0
         old_val_loss = 100
 
         for epoch in range(epochs):
+            print('Epoch {} of {}'.format(epoch + 1, epochs))
+            nb_batches = int(math.ceil(count/batch_size))
+            progress_bar = Progbar(target=nb_batches)
+            rem_images = count
+            batch_count = 0
+            idx = np.random.randint(0, count, count)
 
-            # ---------------------
-            #  Train Discriminator
-            # ---------------------
+            epoch_gen_loss = []
+            epoch_disc_loss = []
+            for index in range(nb_batches):
+                
+                progress_bar.update(index)
+                
+                if (rem_images < batch_size):
+                    batch_count = rem_images
+                else:
+                    batch_count = batch_size
 
-            # Select a random batch of images
-            idx = np.random.randint(0, x_train.shape[0], batch_size)
-            imgs = x_train[idx]
+                valid = np.ones((batch_count, 1))
+                fake = np.zeros((batch_count, 1))
 
-            # Sample noise as generator input
-            noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
+                # ---------------------
+                #  Train Discriminator
+                # ---------------------
+                batch_index = index * batch_size
+                batch_idx = idx[batch_index : batch_index + batch_count]
+                imgs = x_train[batch_idx]
+                img_labels = y_train[batch_idx]
 
-            # The labels of the digits that the generator tries to create an
-            # image representation of
-            sampled_labels = np.random.randint(0, 4, (batch_size, 1))
+                # Sample noise as generator input
+                noise = np.random.normal(0, 1, (batch_count, self.latent_dim))
 
-            # Generate a half batch of new images
-            gen_imgs = self.generator.predict([noise, sampled_labels])
+                # The labels of the digits that the generator tries to create an
+                # image representation of
+                sampled_labels = np.random.randint(0, 4, (batch_count, 1))
 
-            # Image labels. 0-9 
-            img_labels = y_train[idx]
+                # Generate a half batch of new images
+                gen_imgs = self.generator.predict([noise, sampled_labels])
 
-            # Train the discriminator
-            d_loss_real = self.discriminator.train_on_batch(imgs, [valid, img_labels])
-            print ("Real data performance: %d [D loss: %f, acc.: %.2f%%, val_acc: %.2f%%]"  % (epoch, d_loss_real[0], 100*d_loss_real[3], 100*d_loss_real[4]))
-            d_loss_fake = self.discriminator.train_on_batch(gen_imgs, [fake, sampled_labels])
-            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
 
-            # ---------------------
-            #  Train Generator
-            # ---------------------
+                # Train the discriminator
+                d_loss_real = self.discriminator.train_on_batch(imgs, [valid, img_labels])
+                d_loss_fake = self.discriminator.train_on_batch(gen_imgs, [fake, sampled_labels])
+                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
+                epoch_disc_loss.append(d_loss)
+                # ---------------------
+                #  Train Generator
+                # ---------------------
+                # Train the generator
+                g_loss = self.combined.train_on_batch([noise, sampled_labels], [valid, sampled_labels])
+                epoch_gen_loss.append(g_loss)
 
-            # Train the generator
-            g_loss = self.combined.train_on_batch([noise, sampled_labels], [valid, sampled_labels])
+                rem_images -= batch_count
 
             # Plot the progress
+            generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
+            discriminator_train_loss = np.mean(np.array(epoch_disc_loss), axis=0)
+
             # print average of real and fake [ training + validation loss, training accuracy, validation accuracy, generator loss
-            print ("Combined performance: %d [D loss: %f, acc.: %.2f%%, val_acc: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[3], 100*d_loss[4], g_loss[0]))
-            self.save_model()
+            metrics = self.discriminator.metrics_names
+            print ("Combined data performance: %d [%s: %f, %s: %.2f%%, %s: %.2f%%, , %s: %.2f%%, , %s: %.2f%%] [G loss: %f]"  
+                   % (epoch, metrics[0], discriminator_train_loss[0],metrics[1], discriminator_train_loss[1], metrics[2], discriminator_train_loss[2], 
+                      metrics[3], 100*discriminator_train_loss[3], metrics[4], 100*discriminator_train_loss[4], generator_train_loss[0]))
+            
+            
             #calculate validation loss and save best model
             val_loss = self.validate('./data/val.txt', batch_size)
             if (val_loss < old_val_loss):
-                print("Old val loss: %.2f%%, new val loss: %.2f%%" % (val_loss, old_val_loss))
+                print("Old val loss: %.2f%%, new val loss: %.2f%%" % (old_val_loss, val_loss ))
                 self.save_model()
                 old_val_loss = val_loss
             
@@ -344,7 +366,8 @@ class ACGAN():
        
         gt = data_validation['finding'].to_numpy()
         val_loss = sparse_categorical_crossentropy(tf.convert_to_tensor(gt), tf.convert_to_tensor(pred[1]))
-        val_loss_numpy = val_loss.eval(session=tf.compat.v1.Session())
+        
+        val_loss_numpy = val_loss.eval()
         total_val_loss = np.sum(val_loss_numpy)/data_count
         return total_val_loss
 
@@ -495,59 +518,61 @@ class ACGAN():
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=['train', 'evaluate', 'generate'], required=True, default = 'train')
-    parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_ac_covid/discriminator_weights.hdf5")
-    parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/")
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--bs", type=int, default=10)
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--image_count", type=int, default=100)
-    parser.add_argument("--label", type=int, default=3)
-    parser.add_argument("--sample_interval", type=int, default=50)
-    parser.add_argument("--equal_class", type=bool, default=False)
+    with tf.Session() as sess:
+        print(device_lib.list_local_devices())
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--mode", choices=['train', 'evaluate', 'generate'], required=True, default = 'train')
+        parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_ac_covid/discriminator_weights.hdf5")
+        parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/")
+        parser.add_argument("--lr", type=float, default=1e-4)
+        parser.add_argument("--bs", type=int, default=10)
+        parser.add_argument("--epochs", type=int, default=10)
+        parser.add_argument("--image_count", type=int, default=100)
+        parser.add_argument("--label", type=int, default=3)
+        parser.add_argument("--sample_interval", type=int, default=50)
+        parser.add_argument("--equal_class", type=bool, default=False)
     
-    args = parser.parse_args()
-    acgan = ACGAN()
-    if args.mode == 'train':
-        acgan.train(epochs=args.epochs, batch_size=args.bs, sample_interval = args.sample_interval, equal_class = args.equal_class)
-    else:
-        #json_file = open('./gan_classifier/model_weights/dcgan_ac_covid/discriminator.json', 'r')
-        #loaded_model_json = json_file.read()
-        #json_file.close()
-        #loaded_model = model_from_json(loaded_model_json)
-        ## load weights into new model
-        #loaded_model.load_weights(args.checkpoint)
-        acgan.discriminator.load_weights(args.checkpoint)
-        if args.mode == 'evaluate':
-           acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
-        else :
-            # at the end, loop per class, per 1000 images
-            cnt = args.image_count
-            classes = {0:"normal", 1:"bacterial", 2:"viral", 3:"covid"}
-            batch_count = int(cnt/10)
-            for num in range(batch_count):
-                noise1 = np.random.normal(0, 1, (10, 100))
-                sampled_labels = np.array([args.label for _ in range(10)])
-                gen_imgs = acgan.discriminator.predict([noise, sampled_labels])
-                # Rescale images 0 - 1
-                gen_imgs = 0.5 * gen_imgs + 0.5
-                for i in range(10):
-                    img = gen_imgs[i,:,:,0]
-                    img_index = i + num * 10
-                    scipy.misc.imsave("./data/generated/dcgan_ac_covid/xray_"+str(label)+"_" + str(img_index)+".png", img)
+        args = parser.parse_args()
+        acgan = ACGAN()
+        if args.mode == 'train':
+            acgan.train(epochs=args.epochs, batch_size=args.bs, sample_interval = args.sample_interval, equal_class = args.equal_class)
+        else:
+            #json_file = open('./gan_classifier/model_weights/dcgan_ac_covid/discriminator.json', 'r')
+            #loaded_model_json = json_file.read()
+            #json_file.close()
+            #loaded_model = model_from_json(loaded_model_json)
+            ## load weights into new model
+            #loaded_model.load_weights(args.checkpoint)
+            acgan.discriminator.load_weights(args.checkpoint)
+            if args.mode == 'evaluate':
+                acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
+            else :
+                # at the end, loop per class, per 1000 images
+                cnt = args.image_count
+                classes = {0:"normal", 1:"bacterial", 2:"viral", 3:"covid"}
+                batch_count = int(cnt/10)
+                for num in range(batch_count):
+                    noise1 = np.random.normal(0, 1, (10, 100))
+                    sampled_labels = np.array([args.label for _ in range(10)])
+                    gen_imgs = acgan.discriminator.predict([noise, sampled_labels])
+                    # Rescale images 0 - 1
+                    gen_imgs = 0.5 * gen_imgs + 0.5
+                    for i in range(10):
+                        img = gen_imgs[i,:,:,0]
+                        img_index = i + num * 10
+                        scipy.misc.imsave("./data/generated/dcgan_ac_covid/xray_"+str(label)+"_" + str(img_index)+".png", img)
 
-            #for label in range(0,4):
-            #    r, c = 2, 2
-            #    noise = np.random.normal(0, 1, (r * c, acgan.latent_dim))
-            #    sampled_labels = np.array([label for _ in range(r) for num in range(c)])
-            #    gen_imgs = loaded_model.predict([noise, sampled_labels])
-            #    # Rescale images 0 - 1
-            #    gen_imgs = 0.5 * gen_imgs + 0.5
-            #    cnt = 0
-            #    for i in range(r):
-            #        for j in range(c):
-            #            img = gen_imgs[cnt,:,:,0]
-            #            scipy.misc.imsave("./data/generated/dcgan_ac_covid/class_" + classes[label] + str(cnt)+".png", img)
-            #            cnt += 1
+                #for label in range(0,4):
+                #    r, c = 2, 2
+                #    noise = np.random.normal(0, 1, (r * c, acgan.latent_dim))
+                #    sampled_labels = np.array([label for _ in range(r) for num in range(c)])
+                #    gen_imgs = loaded_model.predict([noise, sampled_labels])
+                #    # Rescale images 0 - 1
+                #    gen_imgs = 0.5 * gen_imgs + 0.5
+                #    cnt = 0
+                #    for i in range(r):
+                #        for j in range(c):
+                #            img = gen_imgs[cnt,:,:,0]
+                #            scipy.misc.imsave("./data/generated/dcgan_ac_covid/class_" + classes[label] + str(cnt)+".png", img)
+                #            cnt += 1
         
