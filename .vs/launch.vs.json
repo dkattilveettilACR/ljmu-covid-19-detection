@@ -18,7 +18,6 @@
       "type": "python",
       "interpreter": "(default)",
       "interpreterArguments": "",
-      //"scriptArguments": "--mode=train --bs=10 --epochs=2",
       "scriptArguments": "--mode=generate --image_count=14",
       "env": {},
       "nativeDebug": false,
@@ -32,13 +31,24 @@
       "interpreter": "(default)",
       "interpreterArguments": "",
       "scriptArguments": "--mode=train --bs=10 --epochs=30 --sample_interval=1",
-      //"scriptArguments": "--mode=evaluate --bs=10",
       "env": {},
       "nativeDebug": false,
       "webBrowserUrl": "",
       "project": "gan_classifier\\dcgan_ac_covid_new.py",
       "projectTarget": "",
       "name": "dcgan_ac_covid_new.py"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "--mode=train --bs=10 --epochs=3 --sample_interval=1",
+      "env": {},
+      "nativeDebug": false,
+      "webBrowserUrl": "",
+      "project": "gan_classifier\\dcgan_ac_covid.py",
+      "projectTarget": "",
+      "name": "dcgan_ac_covid.py"
     }
   ]
 }
