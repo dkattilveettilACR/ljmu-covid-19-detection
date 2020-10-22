@@ -1,6 +1,9 @@
 from __future__ import print_function, division
 
-from keras.layers import UpSampling2D, Conv2D, Conv2DTranspose, LeakyReLU, Input, Dense, Reshape, Flatten, Dropout, multiply, BatchNormalization, Activation, Embedding, ZeroPadding2D
+from keras.layers import Input, Dense, Reshape, Flatten, Dropout, multiply
+from keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D
+from keras.layers.advanced_activations import LeakyReLU
+from keras.layers.convolutional import UpSampling2D, Conv2D, Conv2DTranspose
 from keras.models import Sequential, Model, load_model, model_from_json
 from keras.optimizers import Adam
 
@@ -28,13 +31,12 @@ warnings.filterwarnings("ignore")
 from tensorflow.python.keras.losses import sparse_categorical_crossentropy
 import tensorflow as tf
 from tensorflow.python.client import device_lib
-import random
-from keras.utils.generic_utils import Progbar
 
 class ACGAN():
     def __init__(self):
         # Input shape
         self.img_rows = 256
+
         self.img_cols = 256
         self.channels = 1
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
@@ -202,79 +204,58 @@ class ACGAN():
         y_train = np.asarray(y_train)
         y_train = y_train.reshape(-1, 1)
 
+        valid = np.ones((batch_size, 1))
+        fake = np.zeros((batch_size, 1))
+
         val_loss = 0
         old_val_loss = 100
 
         for epoch in range(epochs):
-            print('Epoch {} of {}'.format(epoch + 1, epochs))
-            nb_batches = int(math.ceil(count/batch_size))
-            progress_bar = Progbar(target=nb_batches)
-            rem_images = count
-            batch_count = 0
-            idx = np.random.randint(0, count, count)
 
-            epoch_gen_loss = []
-            epoch_disc_loss = []
-            for index in range(nb_batches):
-                
-                progress_bar.update(index)
-                
-                if (rem_images < batch_size):
-                    batch_count = rem_images
-                else:
-                    batch_count = batch_size
+            # ---------------------
+            #  Train Discriminator
+            # ---------------------
 
-                valid = np.ones((batch_count, 1))
-                fake = np.zeros((batch_count, 1))
+            # Select a random batch of images
+            idx = np.random.randint(0, x_train.shape[0], batch_size)
+            imgs = x_train[idx]
 
-                # ---------------------
-                #  Train Discriminator
-                # ---------------------
-                batch_index = index * batch_size
-                batch_idx = idx[batch_index : batch_index + batch_count]
-                imgs = x_train[batch_idx]
-                img_labels = y_train[batch_idx]
+            # Sample noise as generator input
+            noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
 
-                # Sample noise as generator input
-                noise = np.random.normal(0, 1, (batch_count, self.latent_dim))
+            # The labels of the digits that the generator tries to create an
+            # image representation of
+            sampled_labels = np.random.randint(0, 4, (batch_size, 1))
 
-                # The labels of the digits that the generator tries to create an
-                # image representation of
-                sampled_labels = np.random.randint(0, 4, (batch_count, 1))
+            # Generate a half batch of new images
+            gen_imgs = self.generator.predict([noise, sampled_labels])
 
-                # Generate a half batch of new images
-                gen_imgs = self.generator.predict([noise, sampled_labels])
+            # Image labels. 0-9 
+            img_labels = y_train[idx]
 
+            # Train the discriminator
+            d_loss_real = self.discriminator.train_on_batch(imgs, [valid, img_labels])
+            d_loss_fake = self.discriminator.train_on_batch(gen_imgs, [fake, sampled_labels])
+            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
 
-                # Train the discriminator
-                d_loss_real = self.discriminator.train_on_batch(imgs, [valid, img_labels])
-                d_loss_fake = self.discriminator.train_on_batch(gen_imgs, [fake, sampled_labels])
-                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-                epoch_disc_loss.append(d_loss)
-                # ---------------------
-                #  Train Generator
-                # ---------------------
-                # Train the generator
-                g_loss = self.combined.train_on_batch([noise, sampled_labels], [valid, sampled_labels])
-                epoch_gen_loss.append(g_loss)
+            # ---------------------
+            #  Train Generator
+            # ---------------------
 
-                rem_images -= batch_count
+            # Train the generator
+            g_loss = self.combined.train_on_batch([noise, sampled_labels], [valid, sampled_labels])
 
             # Plot the progress
-            generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
-            discriminator_train_loss = np.mean(np.array(epoch_disc_loss), axis=0)
-
             # print average of real and fake [ training + validation loss, training accuracy, validation accuracy, generator loss
             metrics = self.discriminator.metrics_names
-            print ("Combined data performance: %d [%s: %f, %s: %.2f%%, %s: %.2f%%, , %s: %.2f%%, , %s: %.2f%%] [G loss: %f]"  
-                   % (epoch, metrics[0], discriminator_train_loss[0],metrics[1], discriminator_train_loss[1], metrics[2], discriminator_train_loss[2], 
-                      metrics[3], 100*discriminator_train_loss[3], metrics[4], 100*discriminator_train_loss[4], generator_train_loss[0]))
-            
-            
+            print("Combined data performance: %d [%s: %f, %s: %.2f%%, %s: %.2f%%, , %s: %.2f%%, , %s: %.2f%%] [G loss: %f]"  
+                   % (epoch, metrics[0], d_loss[0], metrics[1], d_loss[1], metrics[2], d_loss[2], 
+                      metrics[3], 100*d_loss[3], metrics[4], 100*d_loss[4], g_loss[0]))
+         
             #calculate validation loss and save best model
             val_loss = self.validate('./data/val.txt', batch_size)
             if (val_loss < old_val_loss):
-                print("Old val loss: %.2f%%, new val loss: %.2f%%" % (old_val_loss, val_loss ))
+                print("Old val loss: %.2f%%, new val loss: %.2f%%" % (old_val_loss, val_loss))
                 self.save_model()
                 old_val_loss = val_loss
             
@@ -366,7 +347,6 @@ class ACGAN():
        
         gt = data_validation['finding'].to_numpy()
         val_loss = sparse_categorical_crossentropy(tf.convert_to_tensor(gt), tf.convert_to_tensor(pred[1]))
-        
         val_loss_numpy = val_loss.eval()
         total_val_loss = np.sum(val_loss_numpy)/data_count
         return total_val_loss
@@ -545,7 +525,7 @@ if __name__ == '__main__':
             #loaded_model.load_weights(args.checkpoint)
             acgan.discriminator.load_weights(args.checkpoint)
             if args.mode == 'evaluate':
-                acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
+               acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
             else :
                 # at the end, loop per class, per 1000 images
                 cnt = args.image_count
