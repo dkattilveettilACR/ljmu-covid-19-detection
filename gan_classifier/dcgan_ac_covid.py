@@ -89,18 +89,22 @@ class ACGAN():
         model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
+        model.add(Dropout(0.25))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
+        model.add(Dropout(0.25))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(64, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
+        model.add(Dropout(0.25))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(32, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
+        model.add(Dropout(0.25))
         model.add(Conv2DTranspose(1, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(Activation("tanh"))
 
@@ -141,7 +145,6 @@ class ACGAN():
         model.add(Conv2D(1024, kernel_size=3, strides=(2, 2), padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
         model.add(Flatten())
 
         model.summary()
@@ -164,14 +167,16 @@ class ACGAN():
         trainpath = './data/train.txt'
         dataTrain = pd.read_csv(trainpath, delimiter = ' ', names=['filename', 'finding'])
         
+        covid_factor = 2
         if (equal_class == True):
-            dataCovid = dataTrain[dataTrain['finding']==3]
-            covidDataCount = len(dataCovid.index)
-            dataNormal = dataTrain[dataTrain['finding']==0].sample(n = covidDataCount)
-            dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covidDataCount)
-            dataViral = dataTrain[dataTrain['finding']==2].sample(n = covidDataCount)
+            covid_factor = 1
 
-            dataTrain = pd.concat([dataNormal, dataBacterial, dataViral, dataCovid], axis = 0)
+        dataCovid = dataTrain[dataTrain['finding']==3]
+        covidDataCount = len(dataCovid.index)
+        dataNormal = dataTrain[dataTrain['finding']==0].sample(n = covid_factor * covidDataCount)
+        dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covid_factor * covidDataCount)
+        dataViral = dataTrain[dataTrain['finding']==2].sample(n = covid_factor * covidDataCount)
+        dataTrain = pd.concat([dataNormal, dataBacterial, dataViral, dataCovid], axis = 0)
 
         print(dataTrain.info())
 
