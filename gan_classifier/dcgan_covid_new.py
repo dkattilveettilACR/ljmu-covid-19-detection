@@ -21,9 +21,6 @@ import scipy.misc
 import argparse
 import warnings
 warnings.filterwarnings("ignore")
-import random
-import math
-from keras.utils.generic_utils import Progbar
 
 class GAN():
     def __init__(self):
@@ -74,22 +71,18 @@ class GAN():
         model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(64, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(32, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
         model.add(Conv2DTranspose(1, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(Activation("tanh"))
 
@@ -126,7 +119,7 @@ class GAN():
         model.add(Conv2D(1024, kernel_size=3, strides=(2, 2), padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        
+        model.add(Dropout(0.25))
         model.add(Flatten())
         model.add(Dense(1, activation='sigmoid'))
 
@@ -169,63 +162,39 @@ class GAN():
 
         x_train = x_train.reshape(count, img_y, img_x, 1)
 
+        valid1 = np.ones((batch_size, 1))
+        fake = np.zeros((batch_size, 1))
+
         for epoch in range(epochs):
-            print('Epoch {} of {}'.format(epoch + 1, epochs))
-            nb_batches = int(math.ceil(count/batch_size))
-            progress_bar = Progbar(target=nb_batches)
-            rem_images = count
-            batch_count = 0
-            idx = np.random.randint(0, count, count)
 
-            epoch_gen_loss = []
-            epoch_disc_loss = []
+            # ---------------------
+            #  Train Discriminator
+            # ---------------------
 
-            for index in range(nb_batches):
-                
-                progress_bar.update(index)
+            # Select a random half of images
+            idx = np.random.randint(0, x_train.shape[0], batch_size)
+            imgs = x_train[idx]
 
-                if (rem_images < batch_size):
-                    batch_count = rem_images
-                else:
-                    batch_count = batch_size
+            # Sample noise and generate a batch of new images
+            noise = np.random.normal(0, 1, (batch_size, self.latent_dim))
+            gen_imgs = self.generator.predict(noise)
 
-                valid1 = np.ones((batch_count, 1))
-                
-                fake = np.zeros((batch_count, 1))
-                
-                # ---------------------
-                #  Train Discriminator
-                # ---------------------
-                batch_index = index * batch_size
-                batch_idx = idx[batch_index : batch_index + batch_count]
-                imgs = x_train[batch_idx]
+            # Train the discriminator (real classified as ones and generated as zeros)
+            d_loss_real = self.discriminator.train_on_batch(imgs, valid1)
+            d_loss_fake = self.discriminator.train_on_batch(gen_imgs, fake)
+            d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
 
-                # Sample noise and generate a batch of new images
-                noise = np.random.normal(0, 1, (batch_count, self.latent_dim))
-                gen_imgs = self.generator.predict(noise)
+            # ---------------------
+            #  Train Generator
+            # ---------------------
 
-                # Train the discriminator (real classified as ones and generated as zeros)
-                d_loss_real = self.discriminator.train_on_batch(imgs, valid1)
-                d_loss_fake = self.discriminator.train_on_batch(gen_imgs, fake)
-                d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-                epoch_disc_loss.append(d_loss)
+            # Train the generator (wants discriminator to mistake images as real)
+            g_loss = self.gan.train_on_batch(noise, valid1)
 
-                # ---------------------
-                #  Train Generator
-                # ---------------------
-                # Train the generator (wants discriminator to mistake images as real)
-                g_loss = self.gan.train_on_batch(noise, valid1)
-                epoch_gen_loss.append(g_loss)
-
-                # Plot the progress
-                
-                rem_images -= batch_count
+            # Plot the progress
+            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
 
             #If at save interval => save generated image samples
-            generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
-            discriminator_train_loss = np.mean(np.array(epoch_disc_loss), axis=0)
-
-            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, discriminator_train_loss[0], 100 * discriminator_train_loss[1], generator_train_loss))
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
 
