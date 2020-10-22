@@ -167,7 +167,7 @@ class ACGAN():
         if (equal_class == True):
             dataCovid = dataTrain[dataTrain['finding']==3]
             covidDataCount = len(dataCovid.index)
-            dataNormal = dataTrain[dataTrain['finding']==3].sample(n = covidDataCount)
+            dataNormal = dataTrain[dataTrain['finding']==0].sample(n = covidDataCount)
             dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covidDataCount)
             dataViral = dataTrain[dataTrain['finding']==2].sample(n = covidDataCount)
 
@@ -368,7 +368,7 @@ class ACGAN():
        
         gt = data_validation['finding'].to_numpy()
         val_loss = sparse_categorical_crossentropy(tf.convert_to_tensor(gt), tf.convert_to_tensor(pred[1]))
-        val_loss_numpy = val_loss.eval()
+        val_loss_numpy = val_loss.numpy()
         total_val_loss = np.sum(val_loss_numpy)/data_count
         return total_val_loss
 
@@ -519,61 +519,61 @@ class ACGAN():
 
 if __name__ == '__main__':
 
-    with tf.Session() as sess:
-        print(device_lib.list_local_devices())
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--mode", choices=['train', 'evaluate', 'generate'], required=True, default = 'train')
-        parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_ac_covid/discriminator_weights.hdf5")
-        parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/")
-        parser.add_argument("--lr", type=float, default=1e-4)
-        parser.add_argument("--bs", type=int, default=10)
-        parser.add_argument("--epochs", type=int, default=10)
-        parser.add_argument("--image_count", type=int, default=100)
-        parser.add_argument("--label", type=int, default=3)
-        parser.add_argument("--sample_interval", type=int, default=50)
-        parser.add_argument("--equal_class", type=bool, default=False)
-    
-        args = parser.parse_args()
-        acgan = ACGAN()
-        if args.mode == 'train':
-            acgan.train(epochs=args.epochs, batch_size=args.bs, sample_interval = args.sample_interval, equal_class = args.equal_class)
-        else:
-            #json_file = open('./gan_classifier/model_weights/dcgan_ac_covid/discriminator.json', 'r')
-            #loaded_model_json = json_file.read()
-            #json_file.close()
-            #loaded_model = model_from_json(loaded_model_json)
-            ## load weights into new model
-            #loaded_model.load_weights(args.checkpoint)
-            acgan.discriminator.load_weights(args.checkpoint)
-            if args.mode == 'evaluate':
-               acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
-            else :
-                # at the end, loop per class, per 1000 images
-                cnt = args.image_count
-                classes = {0:"normal", 1:"bacterial", 2:"viral", 3:"covid"}
-                batch_count = int(cnt/10)
-                for num in range(batch_count):
-                    noise1 = np.random.normal(0, 1, (10, 100))
-                    sampled_labels = np.array([args.label for _ in range(10)])
-                    gen_imgs = acgan.discriminator.predict([noise, sampled_labels])
-                    # Rescale images 0 - 1
-                    gen_imgs = 0.5 * gen_imgs + 0.5
-                    for i in range(10):
-                        img = gen_imgs[i,:,:,0]
-                        img_index = i + num * 10
-                        scipy.misc.imsave("./data/generated/dcgan_ac_covid/xray_"+str(label)+"_" + str(img_index)+".png", img)
+    tf.config.experimental_run_functions_eagerly(True)
+    print(device_lib.list_local_devices())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=['train', 'evaluate', 'generate'], required=True, default = 'train')
+    parser.add_argument("--checkpoint", type=str, required=False, default="./gan_classifier/model_weights/dcgan_ac_covid/discriminator_weights.hdf5")
+    parser.add_argument("--save", type=str, default = "./gan_classifier/model_weights/")
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--bs", type=int, default=10)
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--image_count", type=int, default=100)
+    parser.add_argument("--label", type=int, default=3)
+    parser.add_argument("--sample_interval", type=int, default=50)
+    parser.add_argument("--equal_class", type=bool, default=False)
 
-                #for label in range(0,4):
-                #    r, c = 2, 2
-                #    noise = np.random.normal(0, 1, (r * c, acgan.latent_dim))
-                #    sampled_labels = np.array([label for _ in range(r) for num in range(c)])
-                #    gen_imgs = loaded_model.predict([noise, sampled_labels])
-                #    # Rescale images 0 - 1
-                #    gen_imgs = 0.5 * gen_imgs + 0.5
-                #    cnt = 0
-                #    for i in range(r):
-                #        for j in range(c):
-                #            img = gen_imgs[cnt,:,:,0]
-                #            scipy.misc.imsave("./data/generated/dcgan_ac_covid/class_" + classes[label] + str(cnt)+".png", img)
-                #            cnt += 1
+    args = parser.parse_args()
+    acgan = ACGAN()
+    if args.mode == 'train':
+        acgan.train(epochs=args.epochs, batch_size=args.bs, sample_interval = args.sample_interval, equal_class = args.equal_class)
+    else:
+        #json_file = open('./gan_classifier/model_weights/dcgan_ac_covid/discriminator.json', 'r')
+        #loaded_model_json = json_file.read()
+        #json_file.close()
+        #loaded_model = model_from_json(loaded_model_json)
+        ## load weights into new model
+        #loaded_model.load_weights(args.checkpoint)
+        acgan.discriminator.load_weights(args.checkpoint)
+        if args.mode == 'evaluate':
+            acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
+        else :
+            # at the end, loop per class, per 1000 images
+            cnt = args.image_count
+            classes = {0:"normal", 1:"bacterial", 2:"viral", 3:"covid"}
+            batch_count = int(cnt/10)
+            for num in range(batch_count):
+                noise1 = np.random.normal(0, 1, (10, 100))
+                sampled_labels = np.array([args.label for _ in range(10)])
+                gen_imgs = acgan.discriminator.predict([noise, sampled_labels])
+                # Rescale images 0 - 1
+                gen_imgs = 0.5 * gen_imgs + 0.5
+                for i in range(10):
+                    img = gen_imgs[i,:,:,0]
+                    img_index = i + num * 10
+                    scipy.misc.imsave("./data/generated/dcgan_ac_covid/xray_"+str(label)+"_" + str(img_index)+".png", img)
+
+            #for label in range(0,4):
+            #    r, c = 2, 2
+            #    noise = np.random.normal(0, 1, (r * c, acgan.latent_dim))
+            #    sampled_labels = np.array([label for _ in range(r) for num in range(c)])
+            #    gen_imgs = loaded_model.predict([noise, sampled_labels])
+            #    # Rescale images 0 - 1
+            #    gen_imgs = 0.5 * gen_imgs + 0.5
+            #    cnt = 0
+            #    for i in range(r):
+            #        for j in range(c):
+            #            img = gen_imgs[cnt,:,:,0]
+            #            scipy.misc.imsave("./data/generated/dcgan_ac_covid/class_" + classes[label] + str(cnt)+".png", img)
+            #            cnt += 1
         
