@@ -30,7 +30,7 @@
       "type": "python",
       "interpreter": "(default)",
       "interpreterArguments": "",
-      "scriptArguments": "--mode=train --bs=10 --epochs=30 --sample_interval=1",
+      "scriptArguments": "--mode=train --bs=10 --epochs=2000 --sample_interval=10",
       "env": {},
       "nativeDebug": false,
       "webBrowserUrl": "",

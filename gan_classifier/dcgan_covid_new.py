@@ -66,23 +66,23 @@ class GAN():
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(512, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(64, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(UpSampling2D())
         model.add(Conv2DTranspose(32, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(BatchNormalization(momentum=0.8))
-        model.add(Activation("relu"))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(Conv2DTranspose(1, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
         model.add(Activation("tanh"))
 
@@ -113,10 +113,6 @@ class GAN():
         model.add(LeakyReLU(alpha=0.2))
         model.add(Dropout(0.25))
         model.add(Conv2D(512, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(1024, kernel_size=3, strides=(2, 2), padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
         model.add(Dropout(0.25))
@@ -197,6 +193,8 @@ class GAN():
             #If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
+            self.generator.save(args.save + "dcgen_covid.h5")
+            self.discriminator.save(args.save + "dcdis_covid.h5")
 
     def save_imgs(self, epoch):
         r, c = 2, 2
@@ -214,8 +212,6 @@ class GAN():
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig("./data/generated/dcgan_covid/sample_%d.png" % epoch)
-        self.generator.save(args.save + "dcgen_covid_%d.h5"  % epoch)
-        self.discriminator.save(args.save + "dcdis_covid_%d.h5"  % epoch)
         plt.close()
 
 
