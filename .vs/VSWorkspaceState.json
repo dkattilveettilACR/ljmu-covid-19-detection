@@ -1,6 +1,14 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\cnn_classifier",
+    "\\cnn_classifier\\data_tools",
+    "\\cnn_classifier\\tools",
+    "\\data",
+    "\\data\\generated",
+    "\\data\\generated\\dcgan_covid",
+    "\\gan_classifier"
   ],
+  "SelectedNode": "\\data\\train_generated.txt",
   "PreviewInSolutionExplorer": false
 }

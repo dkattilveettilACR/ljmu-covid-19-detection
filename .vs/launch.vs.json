@@ -42,7 +42,6 @@
       "type": "python",
       "interpreter": "(default)",
       "interpreterArguments": "",
-      //"scriptArguments": "--mode=train --bs=10 --epochs=3 --sample_interval=1",
       "scriptArguments": "--mode=evaluate --bs=10",
       "env": {},
       "nativeDebug": false,
@@ -50,6 +49,18 @@
       "project": "gan_classifier\\dcgan_ac_covid.py",
       "projectTarget": "",
       "name": "dcgan_ac_covid.py"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "--use_generated=True",
+      "env": {},
+      "nativeDebug": false,
+      "webBrowserUrl": "",
+      "project": "cnn_classifier\\data_tools\\prepare_data.py",
+      "projectTarget": "",
+      "name": "prepare_data.py"
     }
   ]
 }

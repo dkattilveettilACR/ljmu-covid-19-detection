@@ -11,13 +11,13 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--combine_pneumonia", action='store_true', default=False)
-parser.add_argument("--use_generated", default=False)
+parser.add_argument("--use_generated", type=bool, default=False)
 args = parser.parse_args()
 
 COVID19_DATA_PATH = "./data/covid19"
 COVID19_AR_DATA_PATH = "./data/covid19_ar"
 PNEUMONIA_DATA_PATH = "./data/Data/chest-xray-pneumonia/chest_xray/"
-GENERATED_DATA_PATH = "./data/generated/dcgan_covid"
+GENERATED_DATA_PATH = "./data/Data/covid-generated"
 DATA_PATH = "./data"
 
 # Assert that the data directories are present
