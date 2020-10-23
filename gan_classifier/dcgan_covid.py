@@ -122,10 +122,6 @@ class GAN():
         model.add(Conv2D(512, kernel_size=3, strides=(2, 2), padding="same"))
         model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(1024, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
         
         model.add(Flatten())
         model.add(Dense(1, activation='sigmoid'))
@@ -214,6 +210,7 @@ class GAN():
                 #  Train Generator
                 # ---------------------
                 # Train the generator (wants discriminator to mistake images as real)
+                noise = np.random.normal(0, 1, (batch_count, self.latent_dim))
                 g_loss = self.gan.train_on_batch(noise, valid1)
                 epoch_gen_loss.append(g_loss)
 
