@@ -193,8 +193,7 @@ class GAN():
             #If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
-            self.generator.save(args.save + "dcgen_covid.h5")
-            self.discriminator.save(args.save + "dcdis_covid.h5")
+            
 
     def save_imgs(self, epoch):
         r, c = 2, 2
@@ -212,6 +211,8 @@ class GAN():
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig("./data/generated/dcgan_covid/sample_%d.png" % epoch)
+        self.generator.save(args.save + "dcgen_covid.h5")
+        self.discriminator.save(args.save + "dcdis_covid.h5")
         plt.close()
 
 

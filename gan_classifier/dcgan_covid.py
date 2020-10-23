@@ -241,9 +241,9 @@ class GAN():
                 axs[i, j].imshow(gen_imgs[cnt, :, :, 0], cmap='gray')
                 axs[i, j].axis('off')
                 cnt += 1
-        fig.savefig("./data/generated/dcgan_covid/sample_%d.png" % epoch)
-        self.generator.save(args.save + "dcgen_covid_%d.h5"  % epoch)
-        self.discriminator.save(args.save + "dcdis_covid_%d.h5"  % epoch)
+        fig.savefig("./data/generated/dcgan_covid/sample.png")
+        self.generator.save(args.save + "dcgen_covid.h5")
+        self.discriminator.save(args.save + "dcdis_covid.h5" )
         plt.close()
 
 
