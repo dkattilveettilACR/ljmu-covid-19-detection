@@ -49,18 +49,6 @@
       "project": "gan_classifier\\dcgan_ac_covid.py",
       "projectTarget": "",
       "name": "dcgan_ac_covid.py"
-    },
-    {
-      "type": "python",
-      "interpreter": "(default)",
-      "interpreterArguments": "",
-      "scriptArguments": "--use_generated=True",
-      "env": {},
-      "nativeDebug": false,
-      "webBrowserUrl": "",
-      "project": "cnn_classifier\\data_tools\\prepare_data.py",
-      "projectTarget": "",
-      "name": "prepare_data.py"
     }
   ]
 }
