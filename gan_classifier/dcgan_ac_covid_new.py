@@ -234,7 +234,9 @@ class ACGAN():
             # ---------------------
             #  Train Generator
             # ---------------------
-
+            noise = np.random.normal(0, 1, (batch_count*2, self.latent_dim))
+            valid = np.ones((batch_count*2, 1))
+            sampled_labels = np.random.randint(0, 4, (batch_count*2, 1))
             # Train the generator
             g_loss = self.combined.train_on_batch([noise, sampled_labels], [valid, sampled_labels])
 
