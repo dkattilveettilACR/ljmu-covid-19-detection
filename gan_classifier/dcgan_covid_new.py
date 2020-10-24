@@ -163,6 +163,7 @@ class GAN():
         x_train = x_train.reshape(count, img_y, img_x, 1)
 
         valid1 = np.ones((batch_size, 1))
+        valid2 = np.ones((batch_size*2, 1))
         fake = np.zeros((batch_size, 1))
         # prepare lists for storing stats each iteration
         d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
@@ -191,7 +192,7 @@ class GAN():
             # ---------------------
             noise = np.random.normal(0, 1, (batch_size*2, self.latent_dim))
             # Train the generator (wants discriminator to mistake images as real)
-            g_loss = self.gan.train_on_batch(noise, valid1)
+            g_loss = self.gan.train_on_batch(noise, valid2)
 
             # Plot the progress
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
