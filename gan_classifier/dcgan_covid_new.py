@@ -21,6 +21,7 @@ import scipy.misc
 import argparse
 import warnings
 warnings.filterwarnings("ignore")
+from matplotlib import pyplot
 
 class GAN():
     def __init__(self):
@@ -155,7 +156,6 @@ class GAN():
                 x_train.append(arr1)
                 count += 1
 
-
             # DEBUG
         print("shape of x train: {}".format(len(x_train)))
         x_train = np.asarray(x_train)
@@ -164,6 +164,8 @@ class GAN():
 
         valid1 = np.ones((batch_size, 1))
         fake = np.zeros((batch_size, 1))
+        # prepare lists for storing stats each iteration
+        d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
 
         for epoch in range(epochs):
 
@@ -187,17 +189,39 @@ class GAN():
             # ---------------------
             #  Train Generator
             # ---------------------
-
+            noise = np.random.normal(0, 1, (batch_size*2, self.latent_dim))
             # Train the generator (wants discriminator to mistake images as real)
             g_loss = self.gan.train_on_batch(noise, valid1)
 
             # Plot the progress
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100 * d_loss[1], g_loss))
-
+            # record history
+            d1_hist.append(d_loss_real[0])
+            d2_hist.append(d_loss_fake[0])
+            g_hist.append(g_loss)
+            a1_hist.append(d_loss_real[1])
+            a2_hist.append(d_loss_fake[1])
             #If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
-            
+        plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist)
+      
+    # create a line plot of loss for the gan and save to file
+    def plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist):
+	    # plot loss
+        pyplot.subplot(2, 1, 1)
+        pyplot.plot(d1_hist, label='d-real')
+        pyplot.plot(d2_hist, label='d-fake')
+        pyplot.plot(g_hist, label='gen')
+        pyplot.legend()
+	    # plot discriminator accuracy
+        pyplot.subplot(2, 1, 2)
+        pyplot.plot(a1_hist, label='acc-real')
+        pyplot.plot(a2_hist, label='acc-fake')
+        pyplot.legend()
+	    # save plot to file
+        pyplot.savefig('./gan_classifier/plots/plot_line_plot_loss.png')
+        pyplot.close()
 
     def save_imgs(self, epoch):
         r, c = 2, 2
@@ -215,11 +239,9 @@ class GAN():
                 axs[i, j].axis('off')
                 cnt += 1
         fig.savefig("./data/generated/dcgan_covid/sample_%d.png" % epoch)
-        self.generator.save(args.save + "dcgen_covid.h5")
-        self.discriminator.save(args.save + "dcdis_covid.h5")
+        self.generator.save(args.save + "dcgen_covid_%d.h5" % epoch)
+        #self.discriminator.save(args.save + "dcdis_covid_%d.h5" % epoch)
         plt.close()
-
-
 
 if __name__ == '__main__':
     
