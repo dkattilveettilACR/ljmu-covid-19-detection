@@ -291,19 +291,19 @@ class ACGAN():
     # create a line plot of loss for the gan and save to file
     def plot_history(self, d1_hist, d2_hist, g_hist, a1_hist, a2_hist):
 	    # plot loss
-        pyplot.subplot(2, 1, 1)
-        pyplot.plot(d1_hist, label='d-real')
-        pyplot.plot(d2_hist, label='d-fake')
-        pyplot.plot(g_hist, label='gen')
-        pyplot.legend()
+        plt.subplot(2, 1, 1)
+        plt.plot(d1_hist, label='d-real')
+        plt.plot(d2_hist, label='d-fake')
+        plt.plot(g_hist, label='gen')
+        plt.legend()
 	    # plot discriminator accuracy
-        pyplot.subplot(2, 1, 2)
-        pyplot.plot(a1_hist, label='acc-real')
-        pyplot.plot(a2_hist, label='acc-fake')
-        pyplot.legend()
+        plt.subplot(2, 1, 2)
+        plt.plot(a1_hist, label='acc-real')
+        plt.plot(a2_hist, label='acc-fake')
+        plt.legend()
 	    # save plot to file
-        pyplot.savefig('./gan_classifier/plots/plot_line_plot_loss.png')
-        pyplot.close()
+        plt.savefig('./gan_classifier/plots/plot_line_plot_loss.png')
+        plt.close()
 
     def sample_images(self, epoch):
         r, c = 2, 2
