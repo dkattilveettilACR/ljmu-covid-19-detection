@@ -144,23 +144,3 @@ static
 
 # custom
 /data/Data/COVID-19-AR
-/gan_classifier/sample_gan.py
-/data/generated/dcgan_covid/genxray_9.png
-/data/generated/dcgan_covid/genxray_8.png
-/data/generated/dcgan_covid/genxray_7.png
-/data/generated/dcgan_covid/genxray_6.png
-/data/generated/dcgan_covid/genxray_5.png
-/data/generated/dcgan_covid/genxray_4.png
-/data/generated/dcgan_covid/genxray_3.png
-/data/generated/dcgan_covid/genxray_2.png
-/data/generated/dcgan_covid/genxray_14.png
-/data/generated/dcgan_covid/genxray_13.png
-/data/generated/dcgan_covid/genxray_12.png
-/data/generated/dcgan_covid/genxray_11.png
-/data/generated/dcgan_covid/genxray_10.png
-/data/generated/dcgan_covid/genxray_1.png
-/data/generated/dcgan_covid/genxray_0.png
-/gan_classifier/model_weights/dcgan_covid/dcgen_covid_2.h5
-/gan_classifier/model_weights/dcgan_covid/dcgen_covid_1.h5
-/data/generated/dcgan_covid/sample_2.png
-/data/generated/dcgan_covid/sample_1.png

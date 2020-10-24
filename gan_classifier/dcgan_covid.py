@@ -35,13 +35,14 @@ class GAN():
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
         self.latent_dim = 100
 
-        optimizer = Adam(0.0001, 0.8)
+        optimizer = Adam(0.0001, 0.5)
+        optimizer_disc = Adam(0.00002, 0.5)
         num_classes = 4
 
         # Build and compile the discriminator
         self.discriminator = self.build_discriminator() #multi_gpu_model(self.build_discriminator())
         self.discriminator.compile(loss='binary_crossentropy',
-                              optimizer=optimizer, metrics=['accuracy'])
+                              optimizer=optimizer_disc, metrics=['accuracy'])
 
         # Build the generator
         self.generator = self.build_generator() #multi_gpu_model(self.build_generator())
@@ -63,35 +64,27 @@ class GAN():
     def build_generator(self):
 
         model = Sequential()
-
-        model.add(Dense(1024 * 8 * 8, activation="relu", input_dim=self.latent_dim))
+        n_nodes = 1024*8*8
+        model.add(Dense(n_nodes, input_dim=self.latent_dim))
+        model.add(LeakyReLU(alpha=0.2))
         model.add(Reshape((8, 8, 1024)))
-        model.add(UpSampling2D())
-        model.add(Conv2DTranspose(512, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
+        # upsample to 16x16
+        model.add(Conv2DTranspose(512, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(UpSampling2D())
-        model.add(Conv2DTranspose(256, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
+        # upsample to 32x32
+        model.add(Conv2DTranspose(256, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(UpSampling2D())
-        model.add(Conv2DTranspose(128, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
+        # upsample to 64x64
+        model.add(Conv2DTranspose(128, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(UpSampling2D())
-        model.add(Conv2DTranspose(64, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
+        # upsample to 128x128
+        model.add(Conv2DTranspose(64, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(UpSampling2D())
-        model.add(Conv2DTranspose(32, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
+        # upsample to 256x256
+        model.add(Conv2DTranspose(32, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2DTranspose(1, kernel_size=3, strides=(1, 1), dilation_rate=2, padding="same"))
-        model.add(Activation("tanh"))
+        # output layer 256x256x1
+        model.add(Conv2D(1, (5,5), activation='tanh', padding='same'))
 
         model.summary()
 
@@ -104,27 +97,27 @@ class GAN():
 
         model = Sequential()
 
-        model.add(Conv2D(32, kernel_size=3, strides=(2, 2), input_shape=self.img_shape, padding="same"))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(64, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(128, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(256, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.25))
-        model.add(Conv2D(512, kernel_size=3, strides=(2, 2), padding="same"))
-        model.add(BatchNormalization(momentum=0.8))
-        model.add(LeakyReLU(alpha=0.2))
-        
-        model.add(Flatten())
-        model.add(Dense(1, activation='sigmoid'))
+        model.add(Conv2D(32, (5,5), padding='same', input_shape=self.img_shape)) 
+        model.add(LeakyReLU(alpha=0.2)) 
+        # downsample to 128x128 
+        model.add(Conv2D(64, (5,5), strides=(2,2), padding='same')) 
+        model.add(LeakyReLU(alpha=0.2)) 
+        # downsample to 64x64 
+        model.add(Conv2D(128, (5,5), strides=(2,2), padding='same')) 
+        model.add(LeakyReLU(alpha=0.2)) 
+        # downsample to 32x32 
+        model.add(Conv2D(256, (5,5), strides=(2,2), padding='same')) 
+        model.add(LeakyReLU(alpha=0.2)) 
+        # downsample to 16x16 
+        model.add(Conv2D(512, (5,5), strides=(2,2), padding='same')) 
+        model.add(LeakyReLU(alpha=0.2)) 
+        # downsample to 8x8 
+        model.add(Conv2D(1024, (5,5), strides=(2,2), padding='same')) 
+        model.add(LeakyReLU(alpha=0.2)) 
+        # classifier 
+        model.add(Flatten()) 
+        model.add(Dropout(0.4)) 
+        model.add(Dense(1, activation='sigmoid')) 
 
         model.summary()
 
@@ -164,7 +157,7 @@ class GAN():
         x_train = np.asarray(x_train)
 
         x_train = x_train.reshape(count, img_y, img_x, 1)
-
+        d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
         for epoch in range(epochs):
             print('Epoch {} of {}'.format(epoch + 1, epochs))
             nb_batches = int(math.ceil(count/batch_size))
@@ -209,14 +202,21 @@ class GAN():
                 # ---------------------
                 #  Train Generator
                 # ---------------------
+                valid1 = np.ones((batch_count*2, 1))
                 # Train the generator (wants discriminator to mistake images as real)
-                noise = np.random.normal(0, 1, (batch_count, self.latent_dim))
+                noise = np.random.normal(0, 1, (batch_count*2, self.latent_dim))
                 g_loss = self.gan.train_on_batch(noise, valid1)
                 epoch_gen_loss.append(g_loss)
 
                 # Plot the progress
                 
                 rem_images -= batch_count
+                 # record history
+                d1_hist.append(d_loss_real[0])
+                d2_hist.append(d_loss_fake[0])
+                g_hist.append(g_loss)
+                a1_hist.append(d_loss_real[1])
+                a2_hist.append(d_loss_fake[1])
 
             #If at save interval => save generated image samples
             generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
@@ -225,6 +225,24 @@ class GAN():
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, discriminator_train_loss[0], 100 * discriminator_train_loss[1], generator_train_loss))
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
+        self.plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist)
+      
+    # create a line plot of loss for the gan and save to file
+    def plot_history(self, d1_hist, d2_hist, g_hist, a1_hist, a2_hist):
+	    # plot loss
+        pyplot.subplot(2, 1, 1)
+        pyplot.plot(d1_hist, label='d-real')
+        pyplot.plot(d2_hist, label='d-fake')
+        pyplot.plot(g_hist, label='gen')
+        pyplot.legend()
+	    # plot discriminator accuracy
+        pyplot.subplot(2, 1, 2)
+        pyplot.plot(a1_hist, label='acc-real')
+        pyplot.plot(a2_hist, label='acc-fake')
+        pyplot.legend()
+	    # save plot to file
+        pyplot.savefig('./gan_classifier/plots/plot_line_plot_loss.png')
+        pyplot.close()
 
     def save_imgs(self, epoch):
         r, c = 2, 2

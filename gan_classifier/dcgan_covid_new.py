@@ -198,7 +198,7 @@ class GAN():
             #If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
-        plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist)
+        self.plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist)
       
     # create a line plot of loss for the gan and save to file
     def plot_history(self, d1_hist, d2_hist, g_hist, a1_hist, a2_hist):
