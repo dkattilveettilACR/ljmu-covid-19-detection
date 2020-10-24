@@ -160,3 +160,7 @@ static
 /data/generated/dcgan_covid/genxray_10.png
 /data/generated/dcgan_covid/genxray_1.png
 /data/generated/dcgan_covid/genxray_0.png
+/gan_classifier/model_weights/dcgan_covid/dcgen_covid_2.h5
+/gan_classifier/model_weights/dcgan_covid/dcgen_covid_1.h5
+/data/generated/dcgan_covid/sample_2.png
+/data/generated/dcgan_covid/sample_1.png
