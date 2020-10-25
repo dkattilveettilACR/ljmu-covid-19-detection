@@ -30,6 +30,7 @@ warnings.filterwarnings("ignore")
 from tensorflow.python.keras.losses import sparse_categorical_crossentropy
 import tensorflow as tf
 from tensorflow.python.client import device_lib
+import imageio
 
 class ACGAN():
     def __init__(self):
@@ -541,23 +542,25 @@ if __name__ == '__main__':
             #loaded_model.load_weights(args.checkpoint)
             acgan.discriminator.load_weights(args.checkpoint)
             if args.mode == 'evaluate':
-               acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
+                acgan.discriminator.load_weights(args.checkpoint)
+                acgan.evaluate( path='./data/test.txt', batch_size = args.bs)
             else :
+                acgan.generator.load_weights(args.checkpoint)
                 # at the end, loop per class, per 1000 images
                 cnt = args.image_count
                 classes = {0:"normal", 1:"bacterial", 2:"viral", 3:"covid"}
                 batch_count = int(cnt/10)
                 for num in range(batch_count):
-                    noise1 = np.random.normal(0, 1, (10, 100))
+                    noise = np.random.normal(0, 1, (10, 100))
                     sampled_labels = np.array([args.label for _ in range(10)])
-                    gen_imgs = acgan.discriminator.predict([noise, sampled_labels])
+                    gen_imgs = acgan.generator.predict([noise, sampled_labels])
                     # Rescale images 0 - 1
                     gen_imgs = 0.5 * gen_imgs + 0.5
                     for i in range(10):
                         img = gen_imgs[i,:,:,0]
                         img_index = i + num * 10
-                        scipy.misc.imsave("./data/generated/dcgan_ac_covid/xray_"+str(label)+"_" + str(img_index)+".png", img)
-
+                        #scipy.misc.imsave("./data/generated/dcgan_ac_covid/xray_"+str(args.label)+"_" + str(img_index)+".png", img)
+                        imageio.imwrite("./data/generated/dcgan_ac_covid/xray_"+str(args.label)+"_" + str(img_index)+".png", img)
                 #for label in range(0,4):
                 #    r, c = 2, 2
                 #    noise = np.random.normal(0, 1, (r * c, acgan.latent_dim))
