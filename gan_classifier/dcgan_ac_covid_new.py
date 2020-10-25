@@ -158,7 +158,7 @@ class ACGAN():
         if (equal_class == True):
             dataCovid = dataTrain[dataTrain['finding']==3]
             covidDataCount = len(dataCovid.index)
-            dataNormal = dataTrain[dataTrain['finding']==3].sample(n = covidDataCount)
+            dataNormal = dataTrain[dataTrain['finding']==0].sample(n = covidDataCount)
             dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covidDataCount)
             dataViral = dataTrain[dataTrain['finding']==2].sample(n = covidDataCount)
 

@@ -157,16 +157,16 @@ class ACGAN():
         trainpath = './data/train.txt'
         dataTrain = pd.read_csv(trainpath, delimiter = ' ', names=['filename', 'finding'])
         
-        covid_factor = 2
+        #covid_factor = 2
         if (equal_class == True):
             covid_factor = 1
 
-        dataCovid = dataTrain[dataTrain['finding']==3]
-        covidDataCount = len(dataCovid.index)
-        dataNormal = dataTrain[dataTrain['finding']==0].sample(n = covid_factor * covidDataCount)
-        dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covid_factor * covidDataCount)
-        dataViral = dataTrain[dataTrain['finding']==2].sample(n = covid_factor * covidDataCount)
-        dataTrain = pd.concat([dataNormal, dataBacterial, dataViral, dataCovid], axis = 0)
+            dataCovid = dataTrain[dataTrain['finding']==3]
+            covidDataCount = len(dataCovid.index)
+            dataNormal = dataTrain[dataTrain['finding']==0].sample(n = covid_factor * covidDataCount)
+            dataBacterial = dataTrain[dataTrain['finding']==1].sample(n = covid_factor * covidDataCount)
+            dataViral = dataTrain[dataTrain['finding']==2].sample(n = covid_factor * covidDataCount)
+            dataTrain = pd.concat([dataNormal, dataBacterial, dataViral, dataCovid], axis = 0)
 
         print(dataTrain.info())
 
