@@ -578,7 +578,7 @@ if __name__ == '__main__':
             classes = {0:"normal", 1:"bacterial", 2:"viral", 3:"covid"}
             batch_count = int(cnt/10)
             for num in range(batch_count):
-                noise1 = np.random.normal(0, 1, (10, 100))
+                noise = np.random.normal(0, 1, (10, 100))
                 sampled_labels = np.array([args.label for _ in range(4)])
                 gen_imgs = acgan.discriminator.predict([noise, sampled_labels])
                 # Rescale images 0 - 1
