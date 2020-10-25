@@ -202,7 +202,7 @@ class ACGAN():
 
         val_loss = 0
         old_val_loss = 100
-        d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
+        d1_hist_epoch, d2_hist_epoch, g_hist_epoch, a1_hist_epoch, a2_hist_epoch = list(), list(), list(), list(), list()
         for epoch in range(epochs):
             print('Epoch {} of {}'.format(epoch + 1, epochs))
             nb_batches = int(math.ceil(count/batch_size))
@@ -213,6 +213,7 @@ class ACGAN():
 
             epoch_gen_loss = []
             epoch_disc_loss = []
+            d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
             for index in range(nb_batches):
                 
                 progress_bar.update(index)
@@ -269,7 +270,11 @@ class ACGAN():
             # Plot the progress
             generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
             discriminator_train_loss = np.mean(np.array(epoch_disc_loss), axis=0)
-
+            d1_hist_epoch.append(np.mean(np.array(d1_hist), axis=0))
+            d2_hist_epoch.append(np.mean(np.array(d2_hist), axis=0))
+            g_hist_epoch.append(np.mean(np.array(g_hist), axis=0))
+            a1_hist_epoch.append(np.mean(np.array(a1_hist), axis=0))
+            a2_hist_epoch.append(np.mean(np.array(a2_hist), axis=0))
             # print average of real and fake [ training + validation loss, training accuracy, validation accuracy, generator loss
             metrics = self.discriminator.metrics_names
             print ("Combined data performance: %d [%s: %f, %s: %.2f%%, %s: %.2f%%, , %s: %.2f%%, , %s: %.2f%%] [G loss: %f]"  
@@ -286,7 +291,7 @@ class ACGAN():
                 # If at save interval => save generated image samples
             if (epoch+1) % sample_interval == 0:
                 self.sample_images(epoch+1)
-        self.plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist)
+        self.plot_history(d1_hist_epoch, d2_hist_epoch, g_hist_epoch, a1_hist_epoch, a2_hist_epoch)
      
     # create a line plot of loss for the gan and save to file
     def plot_history(self, d1_hist, d2_hist, g_hist, a1_hist, a2_hist):

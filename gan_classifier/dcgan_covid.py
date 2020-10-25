@@ -157,7 +157,7 @@ class GAN():
         x_train = np.asarray(x_train)
 
         x_train = x_train.reshape(count, img_y, img_x, 1)
-        d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
+        d1_hist_epoch, d2_hist_epoch, g_hist_epoch, a1_hist_epoch, a2_hist_epoch = list(), list(), list(), list(), list()
         for epoch in range(epochs):
             print('Epoch {} of {}'.format(epoch + 1, epochs))
             nb_batches = int(math.ceil(count/batch_size))
@@ -168,7 +168,7 @@ class GAN():
 
             epoch_gen_loss = []
             epoch_disc_loss = []
-
+            d1_hist, d2_hist, g_hist, a1_hist, a2_hist = list(), list(), list(), list(), list()
             for index in range(nb_batches):
                 
                 progress_bar.update(index)
@@ -221,11 +221,15 @@ class GAN():
             #If at save interval => save generated image samples
             generator_train_loss = np.mean(np.array(epoch_gen_loss), axis=0)
             discriminator_train_loss = np.mean(np.array(epoch_disc_loss), axis=0)
-
+            d1_hist_epoch.append(np.mean(np.array(d1_hist), axis=0))
+            d2_hist_epoch.append(np.mean(np.array(d2_hist), axis=0))
+            g_hist_epoch.append(np.mean(np.array(g_hist), axis=0))
+            a1_hist_epoch.append(np.mean(np.array(a1_hist), axis=0))
+            a2_hist_epoch.append(np.mean(np.array(a2_hist), axis=0))
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, discriminator_train_loss[0], 100 * discriminator_train_loss[1], generator_train_loss))
             if (epoch+1) % sample_interval == 0:
                 self.save_imgs(epoch+1)
-        self.plot_history(d1_hist, d2_hist, g_hist, a1_hist, a2_hist)
+        self.plot_history(d1_hist_epoch, d2_hist_epoch, g_hist_epoch, a1_hist_epoch, a2_hist_epoch)
       
     # create a line plot of loss for the gan and save to file
     def plot_history(self, d1_hist, d2_hist, g_hist, a1_hist, a2_hist):
