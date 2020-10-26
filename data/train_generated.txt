@@ -489,6 +489,10 @@
 ./data/Data/covid-generated/genxray_538.png 3
 ./data/Data/covid-generated/genxray_539.png 3
 ./data/Data/covid-generated/genxray_54.png 3
+./data/Data/covid-generated/genxray_540.png 3
+./data/Data/covid-generated/genxray_541.png 3
+./data/Data/covid-generated/genxray_542.png 3
+./data/Data/covid-generated/genxray_543.png 3
 ./data/Data/covid-generated/genxray_55.png 3
 ./data/Data/covid-generated/genxray_56.png 3
 ./data/Data/covid-generated/genxray_57.png 3
