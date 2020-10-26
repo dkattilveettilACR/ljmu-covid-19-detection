@@ -2,13 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\cnn_classifier",
-    "\\cnn_classifier\\data_tools",
-    "\\cnn_classifier\\tools",
     "\\data",
-    "\\data\\generated",
+    "\\data\\generated\\dcgan_ac_covid",
     "\\data\\generated\\dcgan_covid",
-    "\\gan_classifier"
+    "\\gan_classifier",
+    "\\gan_classifier\\model_weights",
+    "\\gan_classifier\\model_weights\\dcgan_ac_covid",
+    "\\gan_classifier\\model_weights\\dcgan_covid",
+    "\\results_baseline"
   ],
-  "SelectedNode": "\\data\\train_generated.txt",
+  "SelectedNode": "\\data",
   "PreviewInSolutionExplorer": false
 }
