@@ -2,7 +2,7 @@
 
 ## Get the code
 ```
-git clone --recursive https://github.com/arpanmangal/CovidAID.git
+https://github.com/deepakkvgit/ljmu-covid-19-detection.git
 ```
 
 ## Requirements
