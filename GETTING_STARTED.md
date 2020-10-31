@@ -1,60 +1,74 @@
 # Getting Started
 
-## Prepare Data
-1. Prepare the COVID-19 dataset:
-
-    We randomly select a subset of patients for `test` and `val` sets.
-   ```
-   python data_tools/prepare_covid_data.py
-   python data_tools/prepare_covid_ar_data.py
-   ```
-   Modify the file and rerun to update the train-val-test data split.
-
-2. Prepare the combined dataset:
-
-   ```
-   python data_tools/prepare_data.py [--combine_pneumonia]
-   ```
-   - Class 0: Normal
-   - Class 1: Bacterial Pneumonia
-   - Class 2: Viral Pneumonia
-   - Class 3: COVID-19
-
-## Prepare pretrained-model
-`CovidAID` uses the pretrained `CheXNet` model from [here](https://github.com/arnoweng/CheXNet/). We modify the network to classify among 4 classes, while keeping the convolutional layers same. Thus we initialize with `CheXNet` pretrained model weights and fine-tune on top of it.
-
-```
-python tools/transfer.py [--combine_pneumonia]
-```
-
-## Training
-1. Train the classifier layer
-
-    First we train the classifier layer, while freezing the weights of the convolutional layers to be the same as `CheXNet`.
+## Train GAN and generate images
+1. We will train GAN using the data in file gan_classifier/gan_data_tools/metadata.csv
     ```
-    python tools/trainer.py --mode train --freeze --checkpoint models/CovidAID_transfered.pth.tar --bs 16 --save <PATH_TO_SAVE_MODELS_FOLDER> [--combine_pneumonia]
+    python gan_classifier/dcgan_covid.py --mode=train --bs=16 --epochs=150 --sample_interval=10
+    ```
+2. Now we will generate 544 images using the GAN
+    ```
+    python gan_classifier/dcgan_covid.py --mode=generate --image_c--image_count=544
     ```
 
-2. Fine tune the convolutional layers
-
-    Next we take the best model from previous step (according to loss), and fine tune the full model. Since we are interested in increasing the recall of `COVID-19`, we specify the `inc_recall` option to `3` (see our paper [paper](http://arxiv.org/abs/2004.09803) for details).
+## Prepare the combined dataset:
+1. Prepare the combined dataset (Dataset-A) by merging 3 datasets
     ```
-    python tools/trainer.py --mode train --checkpoint <PATH_TO_BEST_MOMDEL> --bs 8 --save <PATH_TO_SAVE_MODELS_FOLDER> [--combine_pneumonia]
+    python cnn_classifier/data_tools/prepare_data.py --use_generated=False
+    ```
+2. Prepare the second combined dataset (Dataset-B) by adding generated images to the combined dataset
+    ```
+    python cnn_classifier/data_tools/prepare_data.py --use_generated=True
     ```
 
-## Evaluation
-Next we run the best model on the test set to see the results.
-```
-python tools/trainer.py --mode test --checkpoint <PATH_TO_BEST_MODEL> --cm_path plots/cm_best --roc_path plots/roc_best [--combine_pneumonia]
-```
+## Train DCNN classifier models using the combined dataset1 (Dataset-A) and evaluate using test data split
+1. Train DCNN network using Dataset-A in stage1 by freezing all layers except the final layer and select the best model (rename the best model to best_1_2_freeze.pth )
+    ```
+    python cnn_classifier/tools/trainer.py --mode train --freeze --checkpoint cnn_classifier/models/CovidAID_4_class.pth --bs 16 --save cnn_classifier/models 
+    ```
+2. Evaluate the best model (Model-A) in stage1
+    ```
+    python cnn_classifier/tools/trainer.py --mode test --checkpoint cnn_classifier/models/best_1_2_freeze.pth 
+    ```
+3. Train DCNN network end to end using Dataset-A in stage2 by initializing weights from the best model in stage1, and select the best model
+    ```
+    python cnn_classifier/tools/trainer.py --mode train --checkpoint cnn_classifier/models/best_1_2_freeze.pth --bs 8 --save cnn_classifier/models 
+    ```
+2. Evaluate the best model (Model-A) in stage2
+    ```
+    python cnn_classifier/tools/trainer.py --mode test --checkpoint cnn_classifier/models/best_1_2_no_freeze.pth 
+    ```
 
-## Inference with trained models
-Trained models are available in the `models` directory. 
+## Train DCNN classifier models using the combined dataset2 (Dataset-B containing generated images) and evaluate using test data split
+1. Train DCNN network using Dataset-B in stage1 by freezing all layers except the final layer and select the best model (rename the best model to best_1_1_freeze.pth )
+    ```
+    python cnn_classifier/tools/trainer.py --mode train --freeze --checkpoint cnn_classifier/models/CovidAID_4_class.pth --bs 16 --save cnn_classifier/models --equal_sampling=True
+    ```
+2. Evaluate the best model (Model-B) in stage1
+    ```
+    python cnn_classifier/tools/trainer.py --mode test --checkpoint cnn_classifier/models/best_1_1_freeze.pth 
+    ```
+3. Train DCNN network end to end using Dataset-B in stage2 by initializing weights from the best model in stage1, and select the best model
+    ```
+    python cnn_classifier/tools/trainer.py --mode train --checkpoint cnn_classifier/models/best_1_1_freeze.pth --bs 8 --save cnn_classifier/models --equal_sampling=True
+    ```
+2. Evaluate the best model (Model-B) in stage2
+    ```
+    python cnn_classifier/tools/trainer.py --mode test --checkpoint cnn_classifier/models/best_1_1_no_freeze.pth 
+    ```
 
-To run simple inference on a set of images, use:
-```
-python tools/inference.py --img_dir <IMG_DIR> --checkpoint <BEST_MODEL_PTH> [--combine_pneumonia] [--visualize_dir <OUT_DIR>]
-```
+## Train AC-GAN model using combined dataset1 (Dataset-A) and evaluate using test data split
+1. Train AC-GAN network using Dataset-A
+    ```
+    python gan_classifier/dcgan_ac_covid.py --mode=train --bs=16 --epochs=50 --sample_interval=10
+    ```
 
-## 3-class classification
-We also provide functionality of three class classification combining the two types of common pneumonias into a single class. Specify the `--combine_pneumonia` flag to activate this functionality.
+2. Evaluate AC-GAN model  
+    ```
+    python gan_classifier/dcgan_ac_covid.py --mode=evaluate --bs=16 --checkpoint=gan_classifier/model_weights/dcgan_ac_covid/discriminator_weights.hdf5
+    ```
+
+## Evaluate CovidAID model using test data split
+1. Train AC-GAN network using Dataset-A
+    ```
+    python cnn_classifier/tools/trainer.py --mode test --checkpoint cnn_classifier/models/CovidAID_4_class.pth
+    ```
