@@ -3,14 +3,12 @@
     "",
     "\\cnn_classifier",
     "\\data",
-    "\\data\\generated\\dcgan_ac_covid",
-    "\\data\\generated\\dcgan_covid",
     "\\gan_classifier",
     "\\gan_classifier\\model_weights",
     "\\gan_classifier\\model_weights\\dcgan_ac_covid",
     "\\gan_classifier\\model_weights\\dcgan_covid",
     "\\results_baseline"
   ],
-  "SelectedNode": "\\data",
+  "SelectedNode": "\\gan_classifier\\dcgan_ac_covid.py",
   "PreviewInSolutionExplorer": false
 }

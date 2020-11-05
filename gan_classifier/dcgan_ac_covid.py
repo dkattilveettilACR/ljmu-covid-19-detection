@@ -15,13 +15,11 @@ import numpy as np
 import os.path
 from os import path
 
-import numpy as np
 import scipy.misc
 import argparse
 from sklearn.metrics import roc_auc_score, confusion_matrix, roc_curve, auc, f1_score
 import itertools
 import matplotlib
-import matplotlib.pyplot as plt
 import math
 import seaborn as sn
 from scipy import interp
@@ -29,10 +27,12 @@ from itertools import cycle
 import warnings
 warnings.filterwarnings("ignore")
 from tensorflow.python.keras.losses import sparse_categorical_crossentropy
+from attention_layer import SelfAttention
 import tensorflow as tf
 from tensorflow.python.client import device_lib
 from keras.utils.generic_utils import Progbar
 import imageio
+
 
 class ACGAN():
     def __init__(self):
@@ -99,8 +99,10 @@ class ACGAN():
         # upsample to 256x256
         model.add(Conv2DTranspose(32, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
+        model.add(SelfAttention(ch=32, name="self_attention"))
         # output layer 256x256x1
         model.add(Conv2D(1, (5,5), activation='tanh', padding='same'))
+        
 
         model.summary()
 
@@ -119,6 +121,7 @@ class ACGAN():
 
         model.add(Conv2D(32, (5,5), padding='same', input_shape=self.img_shape)) 
         model.add(LeakyReLU(alpha=0.2)) 
+        model.add(SelfAttention(ch=32, name="self_attention"))
         # downsample to 128x128 
         model.add(Conv2D(64, (5,5), strides=(2,2), padding='same')) 
         model.add(LeakyReLU(alpha=0.2)) 
@@ -137,7 +140,6 @@ class ACGAN():
         # classifier 
         model.add(Flatten()) 
         model.add(Dropout(0.4)) 
-
         model.summary()
 
         img = Input(shape=self.img_shape)
