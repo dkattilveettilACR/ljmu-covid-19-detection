@@ -42,7 +42,7 @@
       "type": "python",
       "interpreter": "(default)",
       "interpreterArguments": "",
-      "scriptArguments": "--mode=evaluate --bs=10",
+      "scriptArguments": "--mode=train --bs=10 --epochs=2 --sample_interval=10",
       "env": {},
       "nativeDebug": false,
       "webBrowserUrl": "",
