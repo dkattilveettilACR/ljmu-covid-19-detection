@@ -99,7 +99,7 @@ class ACGAN():
         # upsample to 256x256
         model.add(Conv2DTranspose(32, (4,4), strides=(2,2), padding='same'))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(SelfAttention(ch=32, name="self_attention"))
+        #model.add(SelfAttention(ch=32, name="self_attention"))
         # output layer 256x256x1
         model.add(Conv2D(1, (5,5), activation='tanh', padding='same'))
         
@@ -121,7 +121,7 @@ class ACGAN():
 
         model.add(Conv2D(32, (5,5), padding='same', input_shape=self.img_shape)) 
         model.add(LeakyReLU(alpha=0.2)) 
-        model.add(SelfAttention(ch=32, name="self_attention"))
+        
         # downsample to 128x128 
         model.add(Conv2D(64, (5,5), strides=(2,2), padding='same')) 
         model.add(LeakyReLU(alpha=0.2)) 
@@ -137,6 +137,7 @@ class ACGAN():
         # downsample to 8x8 
         model.add(Conv2D(1024, (5,5), strides=(2,2), padding='same')) 
         model.add(LeakyReLU(alpha=0.2)) 
+        model.add(SelfAttention(ch=1024, name="self_attention"))
         # classifier 
         model.add(Flatten()) 
         model.add(Dropout(0.4)) 
