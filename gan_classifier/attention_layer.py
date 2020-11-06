@@ -13,6 +13,16 @@ class SelfAttention(Layer):
         self.channels = ch
         self.filters_f_g = self.channels // 8
         self.filters_h = self.channels
+     
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update({
+            'channels': self.channels,
+            'filters_f_g': self.filters_f_g,
+            'filters_h': self.filters_h
+        })
+        return config
 
     def build(self, input_shape):
         kernel_shape_f_g = (1, 1) + (self.channels, self.filters_f_g)
